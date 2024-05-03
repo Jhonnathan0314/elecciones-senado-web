@@ -2,31 +2,35 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginRequest } from 'src/app/core/models/authentication.model';
 import { SessionData } from 'src/app/core/models/session.model';
+import { CryptoService } from '../crypto/crypto.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SessionService {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private cryptoService: CryptoService) { }
 
 
   saveSession(loginRequest: LoginRequest, token: string) {
-    localStorage.setItem("token", token);
-    localStorage.setItem("username", loginRequest.username);
-    localStorage.setItem("role", this.getTokenAttribute(token, 'user_role'));
+    const sessionData = {
+      token: token,
+      username: loginRequest.username,
+      role: this.getTokenAttribute(token, "user_role")
+    };
+    localStorage.setItem("object", this.cryptoService.encryptObject(sessionData));
     if (this.isTokenExpired() || !this.isValidSessionData()) this.logout();
     this.validateSession();
   }
 
   logout() {
     localStorage.clear();
-    this.redirect('/security/login');
+    this.router.navigateByUrl('/security/login');
   }
 
   validateSession() {
     if (this.isLogged()) {
-      this.redirect('/dashboard');
+      this.router.navigateByUrl('/dashboard');
     } else {
       this.logout();
     }
@@ -37,7 +41,7 @@ export class SessionService {
   }
 
   isLogged(): boolean {
-    return localStorage.getItem("token") != null && this.isValidSessionData();
+    return localStorage.getItem("object") != null && this.isValidSessionData();
   }
 
   isTokenExpired(): boolean {
@@ -52,10 +56,12 @@ export class SessionService {
   }
 
   getSessionData(): SessionData {
+    const localStorageValue = this.cryptoService.decryptObject(localStorage.getItem("object") ?? "");
+
     let sessionData: SessionData = new SessionData();
-    sessionData.token = localStorage.getItem('token') || '';
-    sessionData.username = localStorage.getItem('username') || '';
-    sessionData.role = localStorage.getItem('role') || '';
+    sessionData.token = localStorageValue.token;
+    sessionData.username = localStorageValue.username;
+    sessionData.role = localStorageValue.role;
     
     return sessionData;
   }
