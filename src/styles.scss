@@ -1,1 +1,62 @@
-/* You can add global styles to this file, and also import other style files */
+@import "variables";
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('./assets/img/background.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.field {
+    padding-block: 5px;
+    width: 70%; 
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+input, button, select {
+    width: auto;
+    height: 35px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+}
+
+input, select {
+    padding-inline: 10px;
+    background-color: $col-blue-five;
+}
+
+button {
+    padding-inline: 30px;
+    background-color: $col-blue-one;
+    color: $col-text-primary;
+}
+
+a {
+    text-decoration: none;
+}
+
+h1 {
+    font-size: 1.7em;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.flex-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}

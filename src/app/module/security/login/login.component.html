@@ -1,1 +1,22 @@
-<p>login works!</p>
+<div class="container">
+    <div class="info flex-column">
+        <img src="../../../../assets/img/logo.png" alt="logo">
+        <h1>MODULO REGISTRO DE RESULTADOS</h1>
+        <h2>Elecciones al senado</h2>
+    </div>
+    <form class="form flex-column">
+        <h1>Login</h1>
+        <div class="field">
+            <label for="username">Correo electrónico</label>
+            <input type="text" name="username" [(ngModel)]="username">
+        </div>
+        <div class="field">
+            <label for="password">Contraseña</label>
+            <input type="password" name="password" [(ngModel)]="password">
+        </div>
+        <div>
+            <button (click)="login()">Ingresar</button>
+        </div>
+        <a routerLink="/security/register">Registrarse ahora</a>
+    </form>
+</div>

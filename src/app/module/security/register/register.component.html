@@ -1,1 +1,46 @@
-<p>register works!</p>
+<div class="container">
+    <div class="info flex-column">
+        <img src="../../../../assets/img/logo.png" alt="logo">
+        <h1>MODULO REGISTRO DE RESULTADOS</h1>
+        <h2>Elecciones al senado</h2>
+    </div>
+    <form class="form flex-column">
+        <h1 class="flex-full">Registro</h1>
+        <div class="field flex-field">
+            <label for="documentType">Tipo de documento</label>
+            <select type="text" name="documentType" [(ngModel)]="documentType">
+                <option *ngFor="let docType of documentTypes" [value]="docType.prefix">
+                    {{ docType.name }}
+                </option>
+            </select>
+        </div>
+        <div class="field flex-field">
+            <label for="documentNumber">No. Documento</label>
+            <input type="text" name="documentNumber" [(ngModel)]="documentNumber">
+        </div>
+        <div class="field flex-field">
+            <label for="name">Nombre/s</label>
+            <input type="text" name="name" [(ngModel)]="name">
+        </div>
+        <div class="field flex-field">
+            <label for="lastName">Apellido/s</label>
+            <input type="text" name="lastName" [(ngModel)]="lastName">
+        </div>
+        <div class="field flex-field">
+            <label for="username">Correo electrónico</label>
+            <input type="text" name="username" [(ngModel)]="username">
+        </div>
+        <div class="field flex-field">
+            <label for="password">Contraseña</label>
+            <input type="password" name="password" [(ngModel)]="password">
+        </div>
+        <div class="field flex-field">
+            <label for="confirmPassword">Confirmar contraseña</label>
+            <input type="password" name="confirmPassword" [(ngModel)]="confirmPassword">
+        </div>
+        <div class="flex-full">
+            <button (click)="register()">Crear</button>
+        </div>
+        <a routerLink="/security/login" class="flex-full">Ya tengo una cuenta</a>
+    </form>
+</div>
