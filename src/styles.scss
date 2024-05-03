@@ -21,6 +21,14 @@ body {
     flex-direction: column;
 }
 
+.error-text {
+    color: #f00;
+}
+
+.error-field {
+    border: 1px solid $col-error;
+}
+
 input, button, select {
     width: auto;
     height: 35px;
