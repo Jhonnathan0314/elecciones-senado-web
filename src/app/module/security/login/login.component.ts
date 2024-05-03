@@ -33,7 +33,6 @@ export class LoginComponent implements OnInit {
   }
 
   validateForm() {
-    console.log("this.loginForm.invalid: ", this.loginForm.invalid);
     this.cleanErrors();
     if(this.loginForm.invalid) {
       this.maskErrors();
