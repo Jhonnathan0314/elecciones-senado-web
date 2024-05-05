@@ -1,1 +1,27 @@
-<p>user-all works!</p>
+<h1>Usuarios</h1>
+<div class="table">
+    <table>
+        <thead>
+            <tr>
+                <th>Tipo de documento</th>
+                <th>No. Documento</th>
+                <th>Correo electrónico</th>
+                <th>Nombre completo</th>
+                <th>Rol</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let user of users">
+                <td>{{ user.documentType.name }}</td>
+                <td>{{ user.documentNumber }}</td>
+                <td>{{ user.username}}</td>
+                <td>{{ user.name + ' ' + user.lastName }}</td>
+                <td>{{ user.role.name }} </td>
+                <td><img src="../../../../../../assets/img/update.png" alt="update" (click)="update(user.id)"></td>
+                <td><img src="../../../../../../assets/img/delete.png" alt="delete" (click)="delete(user.id)"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

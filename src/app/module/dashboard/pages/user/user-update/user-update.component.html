@@ -1,1 +1,32 @@
-<p>user-update works!</p>
+<h1>Usuarios - Actualizar</h1>
+<form [formGroup]="updateForm" class="form flex-column">
+    <div class="field flex-field">
+        <label for="documentType">Tipo de documento</label>
+        <input type="text" formControlName="documentType" readonly>
+    </div>
+    <div class="field flex-field">
+        <label for="documentNumber">No. Documento</label>
+        <input type="number" formControlName="documentNumber" readonly>
+    </div>
+    <div class="field flex-field">
+        <label for="name">Nombre/s</label>
+        <input #nameInput type="text" formControlName="name">
+    </div>
+    <div class="field flex-field">
+        <label for="lastName">Apellido/s</label>
+        <input #lastNameInput type="text" formControlName="lastName">
+    </div>
+    <div class="field flex-field">
+        <label for="username">Correo electrónico</label>
+        <input #usernameInput type="text" formControlName="username">
+    </div>
+    <div class="flex-full">
+        <button (click)="validateForm()">Actualizar</button>
+    </div>
+    <div class="flex-full">
+        <span #serverError class="error-text" hidden>Error en el sistema, intente de nuevo más tarde.</span>
+    </div>
+    <div class="flex-full">
+        <span #noChangesError class="error-text" hidden>No se encontraron cambios que guardar.</span>
+    </div>
+</form>

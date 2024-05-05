@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { RegisterRequest } from 'src/app/core/models/authentication.model';
 import { ApiResponse } from 'src/app/core/models/response.model';
 import { User } from 'src/app/core/models/security.model';
 import { environment } from 'src/environments/environment';
@@ -24,7 +25,7 @@ export class UserService {
     return this.http.get<ApiResponse<User>>(`${this.apigatewayUrl}/user/${id}`);
   }
 
-  create(user: User): Observable<ApiResponse<User>> {
+  create(user: RegisterRequest): Observable<ApiResponse<User>> {
     return this.http.post<ApiResponse<User>>(`${this.apigatewayUrl}/user`, user);
   }
 

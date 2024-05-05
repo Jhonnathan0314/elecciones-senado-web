@@ -17,4 +17,5 @@ export class User {
     name: string = "";
     lastName: string = "";
     role: Role = new Role();
+    password?: string = "";
 }

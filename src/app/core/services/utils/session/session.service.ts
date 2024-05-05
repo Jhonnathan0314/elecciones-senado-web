@@ -31,7 +31,7 @@ export class SessionService {
 
   validateSession() {
     if (this.isLogged()) {
-      this.router.navigateByUrl('/dashboard');
+      if(!window.location.pathname.includes('dashboard')) this.router.navigateByUrl('/dashboard');
     } else {
       this.logout();
     }

@@ -1,1 +1,47 @@
-<p>user-create works!</p>
+<h1>Usuarios - Crear</h1>
+<form [formGroup]="createForm" class="form flex-column">
+    <div class="field flex-field">
+        <label for="documentType">Tipo de documento</label>
+        <select #documentTypeInput name="documentType" formControlName="documentType">
+            <option *ngFor="let docType of documentTypes" [value]="docType.prefix">
+                {{ docType.name }}
+            </option>
+        </select>
+    </div>
+    <div class="field flex-field">
+        <label for="documentNumber">No. Documento</label>
+        <input #documentNumberInput type="number" formControlName="documentNumber">
+    </div>
+    <div class="field flex-field">
+        <label for="name">Nombre/s</label>
+        <input #nameInput type="text" formControlName="name">
+    </div>
+    <div class="field flex-field">
+        <label for="lastName">Apellido/s</label>
+        <input #lastNameInput type="text" formControlName="lastName">
+    </div>
+    <div class="field flex-field">
+        <label for="username">Correo electrónico</label>
+        <input #usernameInput type="text" formControlName="username">
+    </div>
+    <div class="field flex-field">
+        <label for="password">Contraseña</label>
+        <input #passwordInput type="password" formControlName="password">
+    </div>
+    <div class="field flex-field">
+        <label for="confirmPassword">Confirmar contraseña</label>
+        <input #confirmPasswordInput type="password" formControlName="confirmPassword">
+    </div>
+    <div class="flex-full">
+        <button (click)="validateForm()">Crear</button>
+    </div>
+    <div class="flex-full">
+        <span #serverError class="error-text" hidden>Error en el sistema, intente de nuevo más tarde.</span>
+    </div>
+    <div class="flex-full">
+        <span #passwordError class="error-text" hidden>Las contraseñas no coinciden.</span>
+    </div>
+    <div class="flex-full">
+        <span #duplicatedError class="error-text" hidden>Usuario ya existente, proceda a iniciar sesión.</span>
+    </div>
+</form>
