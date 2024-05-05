@@ -13,6 +13,7 @@ export class LoginComponent implements OnInit {
 
   @ViewChild("usernameInput") usernameInput: ElementRef;
   @ViewChild("passwordInput") passwordInput: ElementRef;
+  @ViewChild("credentialsError") credentialsError: ElementRef;
   @ViewChild("serverError") serverError: ElementRef;
 
   loginForm: FormGroup;
@@ -67,7 +68,8 @@ export class LoginComponent implements OnInit {
         this.sessionService.saveSession(this.request, response.data.token);
       },
       error: (error) => {
-        this.serverError.nativeElement.removeAttribute('hidden');
+        if(error.error.error.code == 403) this.credentialsError.nativeElement.removeAttribute('hidden');
+        if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
         console.log("error: ", error.statusText);
       }
     })

@@ -17,6 +17,7 @@
         <div>
             <button (click)="validateForm()">Ingresar</button>
         </div>
+        <span #credentialsError class="error-text" hidden>Credenciales inválidas.</span>
         <span #serverError class="error-text" hidden>Error en el sistema, intente de nuevo mas tarde.</span>
         <a routerLink="/security/register">Registrarse ahora</a>
     </form>
