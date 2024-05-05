@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoginRequest } from 'src/app/core/models/authentication.model';
 import { AuthenticationService } from 'src/app/core/services/security/authentication/authentication.service';
-import { SessionService } from 'src/app/core/services/security/session/session.service';
+import { SessionService } from 'src/app/core/services/utils/session/session.service';
 
 @Component({
   selector: 'app-login',

@@ -1,4 +1,4 @@
-import { DocumentType } from "./document-type.model"
+import { DocumentType } from "./security.model"
 
 export class LoginRequest {
     username: string = '';
