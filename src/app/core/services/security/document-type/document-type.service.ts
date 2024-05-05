@@ -13,7 +13,7 @@ export class DocumentTypeService {
   apigatewayUrl = '';
 
   constructor(private http: HttpClient) {
-    this.apigatewayUrl = environment.APIGATEWAY_URL + environment.APIGATEWAY_PATH + environment.RESULTS_PATH;
+    this.apigatewayUrl = environment.APIGATEWAY_URL + environment.APIGATEWAY_PATH + environment.SECURITY_PATH;
   }
 
   findAll(): Observable<ApiResponse<DocumentType[]>> {
