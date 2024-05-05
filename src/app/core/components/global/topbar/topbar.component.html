@@ -1,0 +1,48 @@
+<nav class="header flex-row">
+  <img src="../../../../../assets/img/logo.png" alt="logo" routerLink="/dashboard/user"/>
+  <ul class="ul flex-row">
+    <li class="li flex-row">
+      <a routerLink="#">Usuarios</a>
+      <ul class="ul-submenu">
+        <li class="suboption"><a routerLink="/dashboard/user">Buscar</a></li>
+        <li class="suboption"><a routerLink="/dashboard/user/create">Crear</a></li>
+      </ul>
+    </li>
+    <li class="li flex-row">
+      <a routerLink="#">Mesas</a>
+      <ul class="ul-submenu">
+        <li class="suboption"><a routerLink="/dashboard/election-table">Buscar</a></li>
+        <li class="suboption"><a routerLink="/dashboard/election-table/create">Crear</a></li>
+      </ul>
+    </li>
+    <li class="li flex-row">
+      <a routerLink="#">Partidos</a>
+      <ul class="ul-submenu">
+        <li class="suboption"><a routerLink="/dashboard/party">Buscar</a></li>
+        <li class="suboption"><a routerLink="/dashboard/party/create">Crear</a></li>
+      </ul>
+    </li>
+    <li class="li flex-row">
+      <a routerLink="#">Candidatos</a>
+      <ul class="ul-submenu">
+        <li class="suboption"><a routerLink="/dashboard/candidate">Buscar</a></li>
+        <li class="suboption"><a routerLink="/dashboard/candidate/create">Crear</a></li>
+      </ul>
+    </li>
+    <li class="li flex-row">
+      <a routerLink="/dashboard/results/result">Resultados</a>
+      <ul class="ul-submenu">
+        <li class="suboption"><a routerLink="/dashboard/result">Buscar</a></li>
+        <li class="suboption"><a routerLink="/dashboard/result/create">Registrar</a></li>
+      </ul>
+    </li>
+    <li class="li flex-row">
+      <a>Mi cuenta</a>
+      <ul class="ul-submenu">
+        <li class="suboption no-action"><a routerLink="#">{{ email }}</a></li>
+        <li class="suboption no-action"><a routerLink="#">{{ role }}</a></li>
+        <li class="suboption"><a routerLink="/security/login" (click)="logout()">Salir</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>

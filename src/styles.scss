@@ -56,6 +56,10 @@ h1 {
     font-size: 1.7em;
 }
 
+ul, li {
+    list-style-type: none;
+}
+
 .flex-column {
     display: flex;
     flex-direction: column;

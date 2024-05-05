@@ -10,7 +10,7 @@ const routes: Routes = [
       { path: 'candidate', loadChildren: () => import('./pages/candidate/candidate.module').then(m => m.CandidateModule) },
       { path: 'election-table', loadChildren: () => import('./pages/election-table/election-table.module').then(m => m.ElectionTableModule) },
       { path: 'result', loadChildren: () => import('./pages/result/result.module').then(m => m.ResultModule) },
-      { path: '**', redirectTo: 'party', pathMatch: 'full' }
+      { path: '**', redirectTo: 'user', pathMatch: 'full' }
     ]
   },
   { path: '**', redirectTo: '', pathMatch: 'full' }

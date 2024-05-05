@@ -1,0 +1,88 @@
+@import "../../../../../variables";
+
+.header {  
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 72px;
+
+    img {
+        padding: 10px;
+        max-width: 100px;
+        cursor: pointer;
+    }
+
+    display: flex;
+    align-items: stretch;
+    background: $col-blue-four;
+    color: $col-text-primary;
+
+    .ul {
+        position: static;
+        top: 0;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition-property: opacity, visibility;
+        transition-duration: .2s;
+        
+        .li {
+            position: relative;
+            height: 72px;
+
+            &:hover {
+                background: $col-blue-three;
+            }
+
+            a {
+                padding-inline: 24px;
+                color: $col-text-primary;
+            }
+
+            &:hover .ul-submenu {
+                opacity: 1;
+                visibility: visible;
+                translate: 0 0;
+            }
+
+            .ul-submenu {
+                position: absolute;
+                top: 72px;
+                left: 0;
+                padding: 0;
+                opacity: 0;
+                visibility: hidden;
+                background-color: $col-blue-four;
+                transition: background-color .2s;
+
+                .no-action {
+                    cursor: progress;
+                }
+
+                .suboption {
+                    width: 100%;
+                    opacity: 1;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    a {
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-start;
+                    }
+
+                    &:hover {
+                        background-color: $col-blue-three;
+                    }
+                }
+            }
+        }
+    }
+
+}
