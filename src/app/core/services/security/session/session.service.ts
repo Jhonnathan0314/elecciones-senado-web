@@ -83,4 +83,10 @@ export class SessionService {
     return JSON.parse(decoded);
   }
 
+  getUsername() { return this.getSessionData().username; }
+
+  getRole() { return this.getSessionData().role; }
+  
+  getToken() { return this.getSessionData().token; }
+
 }
