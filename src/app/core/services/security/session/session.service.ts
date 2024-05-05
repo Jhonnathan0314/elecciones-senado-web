@@ -9,7 +9,9 @@ import { CryptoService } from '../crypto/crypto.service';
 })
 export class SessionService {
 
-  constructor(private router: Router, private cryptoService: CryptoService) { }
+  constructor(private router: Router, private cryptoService: CryptoService) {
+    this.validateSession();
+  }
 
 
   saveSession(loginRequest: LoginRequest, token: string) {
@@ -19,7 +21,6 @@ export class SessionService {
       role: this.getTokenAttribute(token, "user_role")
     };
     localStorage.setItem("object", this.cryptoService.encryptObject(sessionData));
-    if (this.isTokenExpired() || !this.isValidSessionData()) this.logout();
     this.validateSession();
   }
 
@@ -41,7 +42,7 @@ export class SessionService {
   }
 
   isLogged(): boolean {
-    return localStorage.getItem("object") != null && this.isValidSessionData();
+    return localStorage.getItem("object") != null && this.isValidSessionData() && !this.isTokenExpired();
   }
 
   isTokenExpired(): boolean {
