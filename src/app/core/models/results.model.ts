@@ -2,6 +2,7 @@ export class Party {
     id: number = 0;
     name: string = '';
     motto: string = '';
+    logo: string = '';
 }
 
 export class Candidate {
