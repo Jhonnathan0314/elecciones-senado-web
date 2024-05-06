@@ -1,1 +1,23 @@
-<p>result-all works!</p>
+<h1>Resultados</h1>
+<div class="table">
+    <table>
+        <thead>
+            <tr>
+                <th>Número de votos</th>
+                <th>Mesa de elección</th>
+                <th>Candidato</th>
+                <th>Partido</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let result of results">
+                <td>{{ result.votes }}</td>
+                <td>{{ result.electionTable.id }}</td>
+                <td>{{ result.candidate.name + ' ' + result.candidate.lastName }}</td>
+                <td>{{ result.candidate.party.name }}</td>
+                <td><img src="../../../../../../assets/img/delete.png" alt="delete" (click)="delete(result.id)"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

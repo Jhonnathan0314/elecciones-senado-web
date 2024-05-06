@@ -3,6 +3,7 @@
     <table>
         <thead>
             <tr>
+                <th>Número de mesa</th>
                 <th>Número de votantes</th>
                 <th>Total votos</th>
                 <th>Editar</th>
@@ -11,6 +12,7 @@
         </thead>
         <tbody>
             <tr *ngFor="let electionTable of electionTables">
+                <td>{{ electionTable.id }}</td>
                 <td>{{ electionTable.numberIds }}</td>
                 <td>{{ electionTable.totalVotes }}</td>
                 <td><img src="../../../../../../assets/img/update.png" alt="update" (click)="update(electionTable.id)"></td>

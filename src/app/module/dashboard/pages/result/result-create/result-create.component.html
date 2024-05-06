@@ -1,1 +1,29 @@
-<p>result-create works!</p>
+<h1>Resultados - Crear</h1>
+<form [formGroup]="createForm" class="form flex-column">
+    <div class="field flex-field">
+        <label for="votes">Número de votos</label>
+        <input #votesInput type="number" formControlName="votes">
+    </div>
+    <div class="field flex-field">
+        <label for="electionTable">Número de mesa</label>
+        <select #electionTableInput name="electionTable" formControlName="electionTable">
+            <option *ngFor="let electionTable of electionTables" [value]="electionTable.id">
+                {{ electionTable.id }}
+            </option>
+        </select>
+    </div>
+    <div class="field flex-field">
+        <label for="candidate">Candidato</label>
+        <select #candidateInput name="candidate" formControlName="candidate">
+            <option *ngFor="let candidate of candidates" [value]="candidate.id">
+                {{ candidate.name }}
+            </option>
+        </select>
+    </div>
+    <div class="flex-full">
+        <button (click)="validateForm()">Crear</button>
+    </div>
+    <div class="flex-full">
+        <span #serverError class="error-text" hidden>Error en el sistema, intente de nuevo más tarde.</span>
+    </div>
+</form>
