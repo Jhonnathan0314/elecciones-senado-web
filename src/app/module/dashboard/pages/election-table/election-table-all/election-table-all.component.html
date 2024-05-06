@@ -1,1 +1,21 @@
-<p>election-table-all works!</p>
+<h1>Mesas de elección</h1>
+<div class="table">
+    <table>
+        <thead>
+            <tr>
+                <th>Número de votantes</th>
+                <th>Total votos</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let electionTable of electionTables">
+                <td>{{ electionTable.numberIds }}</td>
+                <td>{{ electionTable.totalVotes }}</td>
+                <td><img src="../../../../../../assets/img/update.png" alt="update" (click)="update(electionTable.id)"></td>
+                <td><img src="../../../../../../assets/img/delete.png" alt="delete" (click)="delete(electionTable.id)"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

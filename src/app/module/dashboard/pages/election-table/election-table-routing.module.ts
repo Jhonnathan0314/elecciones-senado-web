@@ -7,7 +7,7 @@ import { ElectionTableUpdateComponent } from './election-table-update/election-t
 const routes: Routes = [
   { path: '', component: ElectionTableAllComponent },
   { path: 'create', component: ElectionTableCreateComponent },
-  { path: 'update', component: ElectionTableUpdateComponent },
+  { path: 'update/:id', component: ElectionTableUpdateComponent },
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];
 

@@ -5,6 +5,7 @@ import { ElectionTableRoutingModule } from './election-table-routing.module';
 import { ElectionTableAllComponent } from './election-table-all/election-table-all.component';
 import { ElectionTableCreateComponent } from './election-table-create/election-table-create.component';
 import { ElectionTableUpdateComponent } from './election-table-update/election-table-update.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { ElectionTableUpdateComponent } from './election-table-update/election-t
   ],
   imports: [
     CommonModule,
-    ElectionTableRoutingModule
+    ElectionTableRoutingModule,
+    ReactiveFormsModule
   ]
 })
 export class ElectionTableModule { }
