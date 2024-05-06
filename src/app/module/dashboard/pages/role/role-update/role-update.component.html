@@ -1,0 +1,20 @@
+<h1>Rol - Actualizar</h1>
+<form [formGroup]="updateForm" class="form flex-column">
+    <div class="field flex-field">
+        <label for="id">Id</label>
+        <input type="number" formControlName="id" readonly>
+    </div>
+    <div class="field flex-field">
+        <label for="name">Nombre</label>
+        <input #nameInput type="text" formControlName="name">
+    </div>
+    <div class="flex-full">
+        <button (click)="validateForm()">Actualizar</button>
+    </div>
+    <div class="flex-full">
+        <span #serverError class="error-text" hidden>Error en el sistema, intente de nuevo más tarde.</span>
+    </div>
+    <div class="flex-full">
+        <span #noChangesError class="error-text" hidden>No se encontraron cambios que guardar.</span>
+    </div>
+</form>

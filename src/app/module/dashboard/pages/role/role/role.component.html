@@ -1,0 +1,21 @@
+<h1>Roles</h1>
+<div class="table">
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let role of roles">
+                <td>{{ role.id }}</td>
+                <td>{{ role.name }}</td>
+                <td><img src="../../../../../../assets/img/update.png" alt="update" (click)="update(role.id)"></td>
+                <td><img src="../../../../../../assets/img/delete.png" alt="delete" (click)="delete(role.id)"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
