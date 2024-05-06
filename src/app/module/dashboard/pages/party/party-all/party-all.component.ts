@@ -14,7 +14,7 @@ export class PartyAllComponent implements OnInit {
 
   parties: Party[] = [];
 
-  movePixel = 650;
+  movePixel = 325;
 
   constructor(
     private router: Router,
