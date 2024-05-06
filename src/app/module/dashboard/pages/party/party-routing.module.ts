@@ -7,7 +7,7 @@ import { PartyUpdateComponent } from './party-update/party-update.component';
 const routes: Routes = [
   { path: '', component: PartyAllComponent },
   { path: 'create', component: PartyCreateComponent },
-  { path: 'update', component: PartyUpdateComponent },
+  { path: 'update/:id', component: PartyUpdateComponent },
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];
 

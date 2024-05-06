@@ -1,1 +1,21 @@
-<p>party-all works!</p>
+<h1>Partidos</h1>
+<div class="table">
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Emblema</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let party of parties">
+                <td>{{ party.name }}</td>
+                <td>{{ party.motto }}</td>
+                <td><img src="../../../../../../assets/img/update.png" alt="update" (click)="update(party.id)"></td>
+                <td><img src="../../../../../../assets/img/delete.png" alt="delete" (click)="delete(party.id)"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

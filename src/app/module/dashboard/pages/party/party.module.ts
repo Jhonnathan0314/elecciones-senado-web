@@ -5,6 +5,7 @@ import { PartyRoutingModule } from './party-routing.module';
 import { PartyAllComponent } from './party-all/party-all.component';
 import { PartyCreateComponent } from './party-create/party-create.component';
 import { PartyUpdateComponent } from './party-update/party-update.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { PartyUpdateComponent } from './party-update/party-update.component';
   ],
   imports: [
     CommonModule,
-    PartyRoutingModule
+    PartyRoutingModule,
+    ReactiveFormsModule
   ]
 })
 export class PartyModule { }
