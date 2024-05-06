@@ -7,7 +7,7 @@ import { CandidateUpdateComponent } from './candidate-update/candidate-update.co
 const routes: Routes = [
   { path: '', component: CandidateAllComponent },
   { path: 'create', component: CandidateCreateComponent },
-  { path: 'update', component: CandidateUpdateComponent },
+  { path: 'update/:id', component: CandidateUpdateComponent },
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];
 

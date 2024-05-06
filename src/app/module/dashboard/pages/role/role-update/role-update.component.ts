@@ -29,7 +29,7 @@ export class RoleUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.findPersonById();
+    this.findRoleById();
   }
 
   initializeForm() {
@@ -39,7 +39,7 @@ export class RoleUpdateComponent implements OnInit {
     });
   }
 
-  findPersonById() {
+  findRoleById() {
     this.id = this.activatedRoute.snapshot.params['id'];
     this.roleService.findById(this.id).subscribe({
       next: (response) => {

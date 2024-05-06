@@ -5,7 +5,7 @@ export class Party {
 }
 
 export class Candidate {
-    id: number = 0;
+    id?: number = 0;
     cardNumber: number = 0;
     resolutionNumber: string = '';
     name: string = '';

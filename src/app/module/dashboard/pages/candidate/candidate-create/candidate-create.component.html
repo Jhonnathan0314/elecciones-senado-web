@@ -1,1 +1,36 @@
-<p>candidate-create works!</p>
+<h1>Candidato - Crear</h1>
+<form [formGroup]="createForm" class="form flex-column">
+    <div class="field flex-field">
+        <label for="cardNumber">Número de tarjeta</label>
+        <input #cardNumberInput type="number" formControlName="cardNumber">
+    </div>
+    <div class="field flex-field">
+        <label for="resolutionNumber">Número de resolución</label>
+        <input #resolutionNumberInput type="text" formControlName="resolutionNumber">
+    </div>
+    <div class="field flex-field">
+        <label for="name">Nombre/s</label>
+        <input #nameInput type="text" formControlName="name">
+    </div>
+    <div class="field flex-field">
+        <label for="lastName">Apellido/s</label>
+        <input #lastNameInput type="text" formControlName="lastName">
+    </div>
+    <div class="field flex-field">
+        <label for="party">Partido</label>
+        <select #partyInput name="party" formControlName="party">
+            <option *ngFor="let party of parties" [value]="party.id">
+                {{ party.name }}
+            </option>
+        </select>
+    </div>
+    <div class="flex-full">
+        <button (click)="validateForm()">Crear</button>
+    </div>
+    <div class="flex-full">
+        <span #serverError class="error-text" hidden>Error en el sistema, intente de nuevo más tarde.</span>
+    </div>
+    <div class="flex-full">
+        <span #duplicatedError class="error-text" hidden>Candidato ya existente.</span>
+    </div>
+</form>

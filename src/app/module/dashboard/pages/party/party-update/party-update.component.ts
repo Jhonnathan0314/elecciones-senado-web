@@ -32,7 +32,7 @@ export class PartyUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.findPersonById();
+    this.findPartyById();
   }
 
   initializeForm() {
@@ -42,7 +42,7 @@ export class PartyUpdateComponent implements OnInit {
     });
   }
 
-  findPersonById() {
+  findPartyById() {
     this.id = this.activatedRoute.snapshot.params['id'];
     this.partyService.findById(this.id).subscribe({
       next: (response) => {

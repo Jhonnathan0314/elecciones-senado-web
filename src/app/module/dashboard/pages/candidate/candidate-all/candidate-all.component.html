@@ -1,1 +1,27 @@
-<p>candidate-all works!</p>
+<h1>Partidos</h1>
+<div class="table">
+    <table>
+        <thead>
+            <tr>
+                <th>Número de tarjeta</th>
+                <th>Número de resolución</th>
+                <th>Nombre/s</th>
+                <th>Apellido/s</th>
+                <th>Partido</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let candidate of candidates">
+                <td>{{ candidate.cardNumber }}</td>
+                <td>{{ candidate.resolutionNumber }}</td>
+                <td>{{ candidate.name }}</td>
+                <td>{{ candidate.lastName }}</td>
+                <td>{{ candidate.party.name }}</td>
+                <td><img src="../../../../../../assets/img/update.png" alt="update" (click)="update(candidate.id!)"></td>
+                <td><img src="../../../../../../assets/img/delete.png" alt="delete" (click)="delete(candidate.id!)"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
