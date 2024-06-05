@@ -1,0 +1,37 @@
+<div class="box">
+  <div class="main-row row-left" (click)="move_left()">
+    <img src="assets/img/previous.png" alt="previous" />
+  </div>
+  <div class="main-row row-right" (click)="move_right()">
+    <img src="assets/img/next.png" alt="next" />
+  </div>
+  <div #carouselContainer class="carousel">
+    <div class="hide-scroll">
+      <div class="party" *ngFor="let party of parties">
+        <div class="party-img">
+          <img [src]="'assets/img/parties/' + party.logo" [alt]="party.logo" />
+        </div>
+        <div class="party-info">
+          <div class="party-name">{{ party.name }}</div>
+          <div class="party-motto">{{ party.motto }}</div>
+        </div>
+        <div class="icons">
+          <button class="table-button">
+            <img
+              src="assets/img/update.png"
+              alt="update"
+              (click)="update(party.id)"
+            />
+          </button>
+          <button class="table-button">
+            <img
+              src="assets/img/delete.png"
+              alt="delete"
+              (click)="delete(party.id)"
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

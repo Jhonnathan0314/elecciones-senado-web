@@ -10,11 +10,7 @@ import { PartyService } from 'src/app/core/services/results/party/party.service'
 })
 export class PartyAllComponent implements OnInit {
 
-  @ViewChild("carouselContainer") carouselContainer: ElementRef;
-
   parties: Party[] = [];
-
-  movePixel = 325;
 
   constructor(
     private router: Router,
@@ -49,21 +45,6 @@ export class PartyAllComponent implements OnInit {
         console.log("Error: ", error.statusText);
       }
     })
-  }
-
-  move_left(): void {
-    this.carouselContainer.nativeElement.scrollLeft -= this.movePixel;
-    if (this.carouselContainer.nativeElement.scrollLeft <= 0) {
-      this.carouselContainer.nativeElement.scrollLeft = this.carouselContainer.nativeElement.scrollWidth - this.carouselContainer.nativeElement.clientWidth;
-    }
-  }
-
-  move_right():void {
-    let maxScrollLeft = this.carouselContainer.nativeElement.scrollWidth - this.carouselContainer.nativeElement.clientWidth;
-    this.carouselContainer.nativeElement.scrollLeft += this.movePixel;
-    if (this.carouselContainer.nativeElement.scrollLeft >= maxScrollLeft) {
-      this.carouselContainer.nativeElement.scrollLeft = 0;
-    }
   }
 
 }
