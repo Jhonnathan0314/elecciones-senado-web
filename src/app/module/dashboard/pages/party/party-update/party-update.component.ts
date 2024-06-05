@@ -38,7 +38,8 @@ export class PartyUpdateComponent implements OnInit {
   initializeForm() {
     this.updateForm = this.formBuilder.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
-      motto: ['', [Validators.required, Validators.minLength(2)]]
+      motto: ['', [Validators.required, Validators.minLength(2)]],
+      logo: ['']
     });
   }
 
@@ -58,7 +59,8 @@ export class PartyUpdateComponent implements OnInit {
   fillForm() {
     this.updateForm.patchValue({
       name: this.party.name,
-      motto: this.party.motto
+      motto: this.party.motto,
+      logo: this.party.logo
     });
   }
 
@@ -71,6 +73,7 @@ export class PartyUpdateComponent implements OnInit {
 
     this.party.name = this.updateForm.value.name;
     this.party.motto = this.updateForm.value.motto;
+    this.party.logo = this.updateForm.value.logo
 
     this.update();
   }

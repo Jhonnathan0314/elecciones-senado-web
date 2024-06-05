@@ -117,7 +117,6 @@ export class RegisterComponent implements OnInit {
     this.authenticationService.register(this.request).subscribe({
       next: (response) => {
         this.sessionService.saveSession(this.request, response.data.token);
-        console.log("response: ", response);
       },
       error: (error) => {
         if(error.error.error.code == 409) this.duplicatedError.nativeElement.removeAttribute('hidden');

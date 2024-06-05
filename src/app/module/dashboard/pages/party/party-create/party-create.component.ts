@@ -32,7 +32,8 @@ export class PartyCreateComponent implements OnInit {
   initializeForm() {
     this.createForm = this.formBuilder.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
-      motto: ['', [Validators.required, Validators.minLength(2)]]
+      motto: ['', [Validators.required, Validators.minLength(2)]],
+      logo: ['']
     });
   }
 
@@ -46,7 +47,8 @@ export class PartyCreateComponent implements OnInit {
     this.party = {
       id: 0,
       name: this.createForm.value.name,
-      motto: this.createForm.value.motto
+      motto: this.createForm.value.motto,
+      logo: this.createForm.value.logo
     };
     this.create();
   }
