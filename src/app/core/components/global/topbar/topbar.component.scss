@@ -36,6 +36,10 @@
                 background: $col-blue-three;
             }
 
+            .no-pointer {
+                cursor: default;
+            }
+
             a {
                 padding-inline: 24px;
                 color: $col-text-primary;
