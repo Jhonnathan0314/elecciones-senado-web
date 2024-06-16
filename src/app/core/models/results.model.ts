@@ -8,6 +8,7 @@ export class City {
     id: number = 0;
     name: string = "";
     departmentId: number = 0;
+    department?: Department = new Department();
 }
 
 export class Party {
@@ -30,6 +31,8 @@ export class ElectionTable {
     id: number = 0;
     numberIds: number = 0;
     totalVotes: number = 0;
+    cityId: number = 0;
+    city?: City = new City();
 }
 
 export class Result {

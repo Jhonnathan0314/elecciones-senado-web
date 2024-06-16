@@ -8,6 +8,22 @@
         <label for="totalVotes">Total votos</label>
         <input #totalVotesInput type="number" formControlName="totalVotes">
     </div>
+    <div class="field flex-field">
+        <label for="departmentId">Departamento</label>
+        <select #departmentIdInput type="number" name="departmentId" formControlName="departmentId" (change)="findCitiesByDepartment()">
+            <option *ngFor="let department of departments" [value]="department.id">
+                {{ department.name }}
+            </option>
+        </select>
+    </div>
+    <div class="field flex-field" *ngIf="departmentSelected">
+        <label for="cityId">Ciudad</label>
+        <select #cityIdInput type="number" name="cityId" formControlName="cityId">
+            <option *ngFor="let city of cities" [value]="city.id">
+                {{ city.name }}
+            </option>
+        </select>
+    </div>
     <div class="flex-full">
         <button (click)="validateForm()">Actualizar</button>
     </div>
