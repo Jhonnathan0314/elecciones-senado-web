@@ -1,3 +1,15 @@
+export class Department {
+    id: number = 0;
+    name: string = "";
+    population: number = 0;
+}
+
+export class City {
+    id: number = 0;
+    name: string = "";
+    departmentId: number = 0;
+}
+
 export class Party {
     id: number = 0;
     name: string = '';
