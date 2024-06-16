@@ -1,0 +1,35 @@
+@import "../../../../../../variables";
+
+h1 {
+  text-align: center;
+}
+
+.report {
+    .table {
+        max-height: 500px;
+        overflow: auto;
+    
+        table {
+            margin: auto;
+        
+            th, td {
+                padding: 10px 20px;
+                border-radius: 5px;
+            }
+        
+            th {
+                background-color: $col-blue-four;
+            }
+            
+            td {
+                background-color: $col-blue-five;
+                text-align: center;
+                
+                img {
+                    max-width: 40px;
+                }
+            }
+        
+        }
+    }
+}

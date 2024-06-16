@@ -26,3 +26,9 @@ export class Result {
     electionTable: ElectionTable = new ElectionTable();
     candidate: Candidate = new Candidate();
 }
+
+export class Report {
+    candidate: Candidate = new Candidate();
+    electionTable: ElectionTable = new ElectionTable();
+    votePercentage: number = 0;
+}

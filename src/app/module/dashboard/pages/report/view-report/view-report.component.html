@@ -1,0 +1,28 @@
+<h1>Reportes</h1>
+<div class="report">
+    <div class="top"></div>
+    <div class="table">
+        <table>
+            <thead>
+                <th></th>
+                <th>Candidato</th>
+                <th>Partido</th>
+                <th>Total votos</th>
+                <th>Porcentaje votos</th>
+                <th>Ciudad</th>
+                <th>Departamento</th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let report of reports">
+                    <td><img [src]="'assets/img/parties/' + report.candidate.party.logo" [alt]="report.candidate.party.logo"/></td>
+                    <td>{{ report.candidate.name + ' ' + report.candidate.lastName}}</td>
+                    <td>{{ report.candidate.party.name }}</td>
+                    <td>pendiente</td>
+                    <td>{{ report.votePercentage + ' %' }}</td>
+                    <td>pendiente</td>
+                    <td>pendiente</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
