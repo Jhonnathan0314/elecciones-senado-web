@@ -16,7 +16,7 @@
         <label for="candidate">Candidato</label>
         <select #candidateInput name="candidate" formControlName="candidate">
             <option *ngFor="let candidate of candidates" [value]="candidate.id">
-                {{ candidate.name }}
+                {{ candidate.name + " " + candidate.lastName + " | " + candidate.party.name }}
             </option>
         </select>
     </div>
