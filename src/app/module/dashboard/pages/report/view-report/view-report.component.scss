@@ -5,6 +5,10 @@ h1 {
 }
 
 .report {
+    .top {
+        padding-bottom: 24px;
+    }
+
     .table {
         max-height: 500px;
         overflow: auto;

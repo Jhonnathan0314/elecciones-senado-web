@@ -42,8 +42,19 @@ export class Result {
     candidate: Candidate = new Candidate();
 }
 
-export class Report {
-    candidate: Candidate = new Candidate();
-    electionTable: ElectionTable = new ElectionTable();
-    votePercentage: number = 0;
+export class ReportCandidate {
+    candidateName: string = '';
+    partyName: string = '';
+    reportedTables: number = 0;
+    totalVotes: number = 0;
+    percentage: number = 0;
+}
+
+export class ReportElectionTable {
+    cityId: number = 0;
+    reportedTables: number = 0;
+    totalVotes: number = 0;
+    percentage: number = 0;
+    city?: City = new City();
+    department?: Department = new Department();
 }

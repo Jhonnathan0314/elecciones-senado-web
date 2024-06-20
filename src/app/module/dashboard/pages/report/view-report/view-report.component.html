@@ -1,26 +1,48 @@
 <h1>Reportes</h1>
 <div class="report">
-    <div class="top"></div>
-    <div class="table">
+    <div class="form flex-column top">
+        <label for="electionTable">Número de mesa</label>
+        <select [(ngModel)]="reportSelected">
+            <option selected [value]="1">Candidatos</option>
+            <option [value]="2">Mesas de eleccion</option>
+        </select>
+    </div>
+    <div class="table" *ngIf="reportSelected == 1">
         <table>
             <thead>
-                <th></th>
-                <th>Candidato</th>
                 <th>Partido</th>
-                <th>Total votos</th>
-                <th>Porcentaje votos</th>
-                <th>Ciudad</th>
-                <th>Departamento</th>
+                <th>Candidato</th>
+                <th>Mesas reportadas</th>
+                <th>Votos totales</th>
+                <th>Porcentaje</th>
             </thead>
             <tbody>
-                <tr *ngFor="let report of reports">
-                    <td><img [src]="'assets/img/parties/' + report.candidate.party.logo" [alt]="report.candidate.party.logo"/></td>
-                    <td>{{ report.candidate.name + ' ' + report.candidate.lastName}}</td>
-                    <td>{{ report.candidate.party.name }}</td>
-                    <td>pendiente</td>
-                    <td>{{ report.votePercentage + ' %' }}</td>
-                    <td>pendiente</td>
-                    <td>pendiente</td>
+                <tr *ngFor="let report of candidateReport">
+                    <td>{{ report.partyName }}</td>
+                    <td>{{ report.candidateName }}</td>
+                    <td>{{ report.reportedTables }}</td>
+                    <td>{{ report.totalVotes }}</td>
+                    <td>{{ report.percentage }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="table" *ngIf="reportSelected == 2">
+        <table>
+            <thead>
+                <th>Departamento</th>
+                <th>Ciudad</th>
+                <th>Mesas reportadas</th>
+                <th>Votos totales</th>
+                <th>Porcentaje</th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let report of electionTableReport">
+                    <td>{{ report.department?.name || "Cargando..." }}</td>
+                    <td>{{ report.city?.name || "Cargando..." }}</td>
+                    <td>{{ report.reportedTables }}</td>
+                    <td>{{ report.totalVotes }}</td>
+                    <td>{{ report.percentage }}</td>
                 </tr>
             </tbody>
         </table>

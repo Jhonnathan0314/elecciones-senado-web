@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Report } from 'src/app/core/models/results.model';
+import { City, Department, ReportCandidate, ReportElectionTable } from 'src/app/core/models/results.model';
+import { CityService } from 'src/app/core/services/results/city/city.service';
+import { DepartmentService } from 'src/app/core/services/results/department/department.service';
 import { ReportService } from 'src/app/core/services/results/report/report.service';
 
 @Component({
@@ -9,23 +11,83 @@ import { ReportService } from 'src/app/core/services/results/report/report.servi
 })
 export class ViewReportComponent implements OnInit {
 
-  reports: Report[] = [];
+  candidateReport: ReportCandidate[] = [];
+  electionTableReport: ReportElectionTable[] = [];
 
-  constructor(private reportService: ReportService) { }
+  departments: Department[] = [];
+  cities: City[] = [];
+
+  reportSelected: number = 1;
+
+  constructor(
+    private reportService: ReportService,
+    private departmentService: DepartmentService,
+    private cityService: CityService
+  ) { }
 
   ngOnInit(): void {
-    this.findReports();
+    this.findCandidateReports();
+    this.findElectionTableReports();
   }
 
-  findReports() {
-    this.reportService.findReport().subscribe({
+  findCandidateReports() {
+    this.reportService.findCandidateReport().subscribe({
       next: (data) => {
-        this.reports = data.data;
+        this.candidateReport = data.data;
       },
       error: (error) => {
         console.log("Error: ", error);
       }
     })
+  }
+
+  findElectionTableReports() {
+    this.reportService.findElectionTableReport().subscribe({
+      next: (data) => {
+        this.electionTableReport = data.data;
+        this.findAllCities();
+      },
+      error: (error) => {
+        console.log("Error: ", error);
+      }
+    })
+  }
+
+  findAllCities() {
+    this.cityService.findAll().subscribe({
+      next: (res) => {
+        this.cities = res.data;
+        this.findAllDepartments();
+      },
+      error: (error) => {
+        console.log("Error: ", error);
+      }
+    })
+  }
+
+  findAllDepartments() {
+    this.departmentService.findAll().subscribe({
+      next: (res) => {
+        this.departments = res.data;
+        this.fillCities();
+      },
+      error: (error) => {
+        console.log("Error: ", error);
+      }
+    })
+  }
+
+  fillCities() {
+    this.electionTableReport.forEach(report => {
+      report.city = this.cities.find(city => city.id == report.cityId);
+    });
+    this.fillDepartments();
+  }
+
+  fillDepartments() {
+    this.electionTableReport.forEach(report => {
+      report.department = this.departments.find(department => department.id == report.city?.departmentId);
+    });
   }
 
 }
