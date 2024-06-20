@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription, firstValueFrom } from 'rxjs';
 import { User } from 'src/app/core/models/security.model';
 import { UserService } from 'src/app/core/services/security/user/user.service';
 
@@ -8,9 +9,13 @@ import { UserService } from 'src/app/core/services/security/user/user.service';
   templateUrl: './user-all.component.html',
   styleUrls: ['./user-all.component.scss']
 })
-export class UserAllComponent implements OnInit {
+export class UserAllComponent implements OnInit, OnDestroy {
 
   users: User[] = [];
+
+  userSubscription: Subscription;
+
+  hasServerError: boolean = false;
 
   constructor(
     private router: Router,
@@ -18,18 +23,24 @@ export class UserAllComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.findAll();
+    this.openUserSubscription();
   }
 
-  findAll() {
-    this.userService.findAll().subscribe({
-      next: (response) => {
-        this.users = response.data;
-      },
+  ngOnDestroy(): void {
+    this.closeUserSubscription();
+  }
+
+  openUserSubscription() {
+    this.userSubscription = this.userService.users$.subscribe({
+      next: (users) => this.users = users,
       error: (error) => {
-        console.log("Error: ", error.statusText);
+        this.hasServerError = true;
       }
-    })
+    });
+  }
+
+  closeUserSubscription() {
+    this.userSubscription.unsubscribe();
   }
 
   update(id: number) {
@@ -38,13 +49,8 @@ export class UserAllComponent implements OnInit {
 
   delete(id: number) {
     this.userService.deleteById(id).subscribe({
-      next: (response) => {
-        this.ngOnInit();
-      },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
-    })
+      error: (error) => this.hasServerError = true
+    });
   }
 
 }

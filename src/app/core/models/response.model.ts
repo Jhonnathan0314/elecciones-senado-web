@@ -1,10 +1,16 @@
-export interface ErrorMessage {
-    code: number,
-    title: string,
-    detail: string
+export class ErrorMessage {
+    code: number = 0;
+    title: string = '';
+    detail: string = ''
+
+    constructor(error: ErrorMessage) {
+        this.code = error.code;
+        this.title = error.title;
+        this.detail = error.detail;
+    }
 }
 
-export interface ApiResponse<T> {
-    data: T,
-    error: ErrorMessage
+export class ApiResponse<T> {
+    data: T;
+    error: ErrorMessage;
 }

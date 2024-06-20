@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { User } from 'src/app/core/models/security.model';
 import { UserService } from 'src/app/core/services/security/user/user.service';
 
@@ -16,6 +17,7 @@ export class UserUpdateComponent implements OnInit {
   @ViewChild("usernameInput") usernameInput: ElementRef;
   @ViewChild("serverError") serverError: ElementRef;
   @ViewChild("noChangesError") noChangesError: ElementRef;
+  @ViewChild("duplicatedError") duplicatedError: ElementRef;
 
   id: number = 0;
 
@@ -46,17 +48,10 @@ export class UserUpdateComponent implements OnInit {
     });
   }
 
-  findPersonById() {
+  async findPersonById() {
     this.id = this.activatedRoute.snapshot.params['id'];
-    this.userService.findById(this.id).subscribe({
-      next: (response) => {
-        this.user = response.data;
-        this.fillForm();
-      },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
-    })
+    this.user = await firstValueFrom(this.userService.findById(this.id));
+    this.fillForm();
   }
 
   fillForm() {
@@ -104,19 +99,18 @@ export class UserUpdateComponent implements OnInit {
     
     this.serverError.nativeElement.setAttribute('hidden', '');
     this.noChangesError.nativeElement.setAttribute('hidden', '');
+    this.duplicatedError.nativeElement.setAttribute('hidden', '');
   }
 
   update() {
     this.userService.update(this.user).subscribe({
-      next: (response) => {
-        this.router.navigateByUrl('/dashboard/user');
-      },
+      next: () => this.router.navigateByUrl('/dashboard/user'),
       error: (error) => {
-        if(error.error.error.code == 406) this.noChangesError.nativeElement.removeAttribute('hidden');
-        if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
-        console.log("error: ", error.statusText);
+        if(error.code == 409) this.duplicatedError.nativeElement.removeAttribute('hidden');
+        if(error.code == 406) this.noChangesError.nativeElement.removeAttribute('hidden');
+        if(error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
       }
-    })
+    });
   }
 
 }

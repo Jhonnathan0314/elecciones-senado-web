@@ -122,15 +122,12 @@ export class UserCreateComponent implements OnInit {
 
   create() {
     this.userService.create(this.user).subscribe({
-      next: (response) => {
-        this.router.navigateByUrl('/dashboard/user');
-      },
+      next: () => this.router.navigateByUrl('/dashboard/user'),
       error: (error) => {
-        if(error.error.error.code == 409) this.duplicatedError.nativeElement.removeAttribute('hidden');
-        if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
-        console.log("error: ", error.statusText);
+        if(error.code == 409) this.duplicatedError.nativeElement.removeAttribute('hidden');
+        if(error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
       }
-    })
+    });
   }
 
 }
