@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Result } from 'src/app/core/models/results.model';
 import { ResultService } from 'src/app/core/services/results/result/result.service';
 
@@ -8,9 +9,13 @@ import { ResultService } from 'src/app/core/services/results/result/result.servi
   templateUrl: './result-all.component.html',
   styleUrls: ['./result-all.component.scss']
 })
-export class ResultAllComponent implements OnInit {
+export class ResultAllComponent implements OnInit, OnDestroy {
 
   results: Result[] = [];
+
+  resultSubscription: Subscription;
+
+  hasServerError: boolean = false;
 
   constructor(
     private router: Router,
@@ -18,17 +23,17 @@ export class ResultAllComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.findAll();
+    this.openResultSubscription();
   }
 
-  findAll() {
-    this.resultService.findAll().subscribe({
-      next: (response) => {
-        this.results = response.data;
-      },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
+  ngOnDestroy(): void {
+      this.resultSubscription.unsubscribe();
+  }
+
+  openResultSubscription() {
+    this.resultSubscription = this.resultService.results$.subscribe({
+      next: (results) => this.results = results,
+      error: (error) => this.hasServerError = true
     })
   }
 
@@ -38,12 +43,7 @@ export class ResultAllComponent implements OnInit {
 
   delete(id: number) {
     this.resultService.deleteById(id).subscribe({
-      next: (response) => {
-        this.ngOnInit();
-      },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
+      error: (error) => this.hasServerError = true
     })
   }
 
