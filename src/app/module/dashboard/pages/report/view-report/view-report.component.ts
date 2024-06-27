@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { City, Department, ReportCandidate, ReportElectionTable } from 'src/app/core/models/results.model';
 import { CityService } from 'src/app/core/services/results/city/city.service';
 import { DepartmentService } from 'src/app/core/services/results/department/department.service';
@@ -9,7 +10,7 @@ import { ReportService } from 'src/app/core/services/results/report/report.servi
   templateUrl: './view-report.component.html',
   styleUrls: ['./view-report.component.scss']
 })
-export class ViewReportComponent implements OnInit {
+export class ViewReportComponent implements OnInit, OnDestroy {
 
   candidateReport: ReportCandidate[] = [];
   electionTableReport: ReportElectionTable[] = [];
@@ -19,6 +20,11 @@ export class ViewReportComponent implements OnInit {
 
   reportSelected: number = 1;
 
+  candidateReportSubscription: Subscription;
+  electionTableReportSubscription: Subscription;
+
+  hasServerError: boolean = false;
+
   constructor(
     private reportService: ReportService,
     private departmentService: DepartmentService,
@@ -26,30 +32,29 @@ export class ViewReportComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.findCandidateReports();
-    this.findElectionTableReports();
+    this.openCandidateReportSubscription();
+    this.openElectionTableReportSubscription();
   }
 
-  findCandidateReports() {
-    this.reportService.findCandidateReport().subscribe({
-      next: (data) => {
-        this.candidateReport = data.data;
-      },
-      error: (error) => {
-        console.log("Error: ", error);
-      }
+  ngOnDestroy(): void {
+      this.candidateReportSubscription.unsubscribe();
+      this.electionTableReportSubscription.unsubscribe();
+  }
+
+  openCandidateReportSubscription() {
+    this.candidateReportSubscription = this.reportService.candidatesReport$.subscribe({
+      next: (report) => this.candidateReport = report,
+      error: (error) => this.hasServerError = true
     })
   }
 
-  findElectionTableReports() {
-    this.reportService.findElectionTableReport().subscribe({
-      next: (data) => {
-        this.electionTableReport = data.data;
-        this.findAllCities();
+  openElectionTableReportSubscription() {
+    this.electionTableReportSubscription = this.reportService.electionTableReport$.subscribe({
+      next: (report) => {
+        this.electionTableReport = report;
+        if(this.electionTableReport.length > 0 && this.cities.length === 0) this.findAllCities();
       },
-      error: (error) => {
-        console.log("Error: ", error);
-      }
+      error: (error) => this.hasServerError = true
     })
   }
 
