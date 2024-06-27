@@ -28,6 +28,7 @@ export class CandidateUpdateComponent implements OnInit, OnDestroy {
   parties: Party[] = [];
 
   partySubscription: Subscription;
+  candidateSubscription: Subscription;
 
   hasServerError: boolean = false;
 
@@ -40,18 +41,32 @@ export class CandidateUpdateComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.openPartySubscription();
     this.initializeForm();
-    this.findCandidateById();
+    this.openCandidateSubscription();
+    this.openPartySubscription();
   }
 
   ngOnDestroy(): void {
     this.partySubscription.unsubscribe();
+    this.candidateSubscription.unsubscribe();
   }
 
   openPartySubscription() {
     this.partySubscription = this.partyService.parties$.subscribe({
       next: (parties) => this.parties = parties,
+      error: (error) => this.hasServerError = true
+    })
+  }
+
+  openCandidateSubscription() {
+    this.id = this.activatedRoute.snapshot.params['id'];
+    this.candidateSubscription = this.candidateService.candidates$.subscribe({
+      next: (candidates) => {
+        if(candidates.length > 0) {
+          this.candidate = candidates.find(candidate => candidate.id == this.id)!;
+          this.fillForm();
+        }
+      },
       error: (error) => this.hasServerError = true
     })
   }
@@ -64,19 +79,6 @@ export class CandidateUpdateComponent implements OnInit, OnDestroy {
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       party: ['', [Validators.required]]
     });
-  }
-
-  findCandidateById() {
-    this.id = this.activatedRoute.snapshot.params['id'];
-    this.candidateService.findById(this.id).subscribe({
-      next: (candidate) => {
-        this.candidate = candidate;
-        this.fillForm();
-      },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
-    })
   }
 
   fillForm() {

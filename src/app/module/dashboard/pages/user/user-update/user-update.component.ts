@@ -1,7 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { Subscription, firstValueFrom } from 'rxjs';
 import { User } from 'src/app/core/models/security.model';
 import { UserService } from 'src/app/core/services/security/user/user.service';
 
@@ -10,7 +10,7 @@ import { UserService } from 'src/app/core/services/security/user/user.service';
   templateUrl: './user-update.component.html',
   styleUrls: ['./user-update.component.scss']
 })
-export class UserUpdateComponent implements OnInit {
+export class UserUpdateComponent implements OnInit, OnDestroy {
 
   @ViewChild("nameInput") nameInput: ElementRef;
   @ViewChild("lastNameInput") lastNameInput: ElementRef;
@@ -26,6 +26,10 @@ export class UserUpdateComponent implements OnInit {
 
   documentTypes: DocumentType[] = [];
 
+  userSubscription: Subscription;
+
+  hasServerError: boolean = false;
+
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -35,7 +39,24 @@ export class UserUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.findPersonById();
+    this.openUserSubscription();
+  }
+
+  ngOnDestroy(): void {
+    this.userSubscription.unsubscribe();
+  }
+
+  openUserSubscription() {
+    this.id = this.activatedRoute.snapshot.params['id'];
+    this.userSubscription = this.userService.users$.subscribe({
+      next: (users) => {
+        if(users.length > 0){
+          this.user = users.find(user => user.id == this.id)!;
+          this.fillForm();
+        }
+      },
+      error: (error) => this.hasServerError = true
+    })
   }
 
   initializeForm() {
@@ -46,12 +67,6 @@ export class UserUpdateComponent implements OnInit {
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       username: ['', [Validators.required, Validators.email]]
     });
-  }
-
-  async findPersonById() {
-    this.id = this.activatedRoute.snapshot.params['id'];
-    this.user = await firstValueFrom(this.userService.findById(this.id));
-    this.fillForm();
   }
 
   fillForm() {

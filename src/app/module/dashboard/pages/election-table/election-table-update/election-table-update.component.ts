@@ -28,10 +28,13 @@ export class ElectionTableUpdateComponent implements OnInit, OnDestroy {
 
   departments: Department[] = [];
   cities: City[] = [];
+  filteredCities: City[] = [];
 
   departmentSelected: boolean = true;
 
   departmentSubscription: Subscription;
+  citySubscription: Subscription;
+  electionTableSubscription: Subscription;
 
   hasServerError: boolean = false;
 
@@ -46,19 +49,49 @@ export class ElectionTableUpdateComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.findElectionTableById();
+    this.openElectionTableSubscription();
     this.openDepartmentSubscription();
+    this.openCitySubscription();
   }
 
   ngOnDestroy(): void {
-      this.departmentSubscription.unsubscribe();
+    this.electionTableSubscription.unsubscribe();
+    this.departmentSubscription.unsubscribe();
+    this.citySubscription.unsubscribe();
   }
 
   openDepartmentSubscription() {
     this.departmentSubscription = this.departmentService.departments$.subscribe({
       next: (departments) => {
         this.departments = departments;
-        this.findCityById();
+        this.fillForm();
+      },
+      error: (error) => this.hasServerError = true
+    })
+  }
+
+  openCitySubscription() {
+    this.citySubscription = this.cityService.cities$.subscribe({
+      next: (cities) => {
+        this.cities = cities;
+        if(cities.length > 0) {
+          this.electionTable.city = cities.find(city => city.id == this.electionTable.cityId);
+          this.filteredCities = cities.filter(city => city.departmentId == this.electionTable.city?.departmentId);
+          this.departmentSelected = true;
+          this.fillForm();
+        }
+      }
+    })
+  }
+
+  openElectionTableSubscription() {
+    this.id = this.activatedRoute.snapshot.params['id'];
+    this.electionTableSubscription = this.electionTableService.electionTables$.subscribe({
+      next: (electionTables) => {
+        if(electionTables.length > 0){
+          this.electionTable = electionTables.find(electionTable => electionTable.id == this.id)!;
+          this.fillForm();
+        }
       },
       error: (error) => this.hasServerError = true
     })
@@ -73,31 +106,6 @@ export class ElectionTableUpdateComponent implements OnInit, OnDestroy {
     });
   }
 
-  findElectionTableById() {
-    this.id = this.activatedRoute.snapshot.params['id'];
-    this.electionTableService.findById(this.id).subscribe({
-      next: (electionTable) => {
-        this.electionTable = electionTable;
-      },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
-    })
-  }
-
-  findCityById() {
-    this.cityService.findById(this.electionTable.cityId).subscribe({
-      next: (city) => {
-        this.electionTable.city = city;
-        this.findCitiesByDepartmentId(this.electionTable.city.departmentId);
-        this.fillForm();
-      },
-      error: (error) => {
-        console.log("Error: ", error);
-      }
-    })
-  }
-
   fillForm() {
     this.updateForm.patchValue({
       numberIds: this.electionTable.numberIds,
@@ -107,30 +115,8 @@ export class ElectionTableUpdateComponent implements OnInit, OnDestroy {
     });
   }
 
-  findCitiesByDepartmentId(id: number) {
-    this.cityService.findByDepartment(id).subscribe({
-      next: (cities) => {
-        this.cities = cities;
-        this.departmentSelected = true;
-      },
-      error: (error) => {
-        console.log("Error: ", error);
-        this.departmentSelected = false;
-      }
-    })
-  }
-
   findCitiesByDepartment() {
-    this.cityService.findByDepartment(this.updateForm.value.departmentId).subscribe({
-      next: (cities) => {
-        this.cities = cities;
-        this.departmentSelected = true;
-      },
-      error: (error) => {
-        console.log("Error: ", error);
-        this.departmentSelected = false;
-      }
-    })
+    this.filteredCities = this.cities.filter(city => city.departmentId == this.updateForm.value.departmentId);
   }
 
   validateForm() {

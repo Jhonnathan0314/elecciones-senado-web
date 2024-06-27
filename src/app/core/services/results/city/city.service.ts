@@ -45,14 +45,6 @@ export class CityService {
       });
   }
 
-  findById(id: number): Observable<City> {
-    return this.http.get<ApiResponse<City>>(`${this.apigatewayUrl}/city/${id}`)
-      .pipe(
-        map(response => response.data),
-        catchError(error => this.handleError(error))
-      );
-  }
-
   findByDepartment(id: number): Observable<City[]> {
     return this.http.get<ApiResponse<City[]>>(`${this.apigatewayUrl}/city/department/${id}`)
       .pipe(

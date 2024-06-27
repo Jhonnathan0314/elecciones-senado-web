@@ -57,7 +57,6 @@ export class ViewReportComponent implements OnInit, OnDestroy {
   openElectionTableReportSubscription() {
     this.electionTableReportSubscription = this.reportService.electionTableReport$.subscribe({
       next: (report) => {
-        console.log("REPORT: Realice openElectionTableReportSubscription");
         this.electionTableReport = report;
         this.fillCitiesDepartments();
       },
@@ -68,7 +67,6 @@ export class ViewReportComponent implements OnInit, OnDestroy {
   openCitySubscription() {
     this.citySubscription = this.cityService.cities$.subscribe({
       next: (cities) => {
-        console.log("REPORT: Realice openCitySubscription");
         this.cities = cities
         this.fillCitiesDepartments();
       },
@@ -79,7 +77,6 @@ export class ViewReportComponent implements OnInit, OnDestroy {
   openDepartmentSubscription() {
     this.departmentSubscription = this.departmentService.departments$.subscribe({
       next: (departments) => {
-        console.log("REPORT: Realice openDepartmentSubscription");
         this.departments = departments;
         this.fillCitiesDepartments();
       },
@@ -89,7 +86,6 @@ export class ViewReportComponent implements OnInit, OnDestroy {
 
   fillCitiesDepartments() {
     if(this.electionTableReport.length > 0 && this.cities.length > 0 && this.departments.length > 0){
-      console.log("REPORT: Realice fillCitiesDepartments");
       this.electionTableReport.forEach(report => {
         report.city = this.cities.find(city => city.id == report.cityId);
         report.department = this.departments.find(department => department.id == report.city?.departmentId);

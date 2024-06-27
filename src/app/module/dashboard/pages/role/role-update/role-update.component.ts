@@ -1,7 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
+import { Subscription, firstValueFrom } from 'rxjs';
 import { Role } from 'src/app/core/models/security.model';
 import { RoleService } from 'src/app/core/services/security/role/role.service';
 
@@ -10,7 +10,7 @@ import { RoleService } from 'src/app/core/services/security/role/role.service';
   templateUrl: './role-update.component.html',
   styleUrls: ['./role-update.component.scss']
 })
-export class RoleUpdateComponent implements OnInit {
+export class RoleUpdateComponent implements OnInit, OnDestroy {
 
   @ViewChild("nameInput") nameInput: ElementRef;
   @ViewChild("serverError") serverError: ElementRef;
@@ -21,6 +21,10 @@ export class RoleUpdateComponent implements OnInit {
   updateForm: FormGroup;
   role: Role = new Role();
 
+  roleSubscription: Subscription;
+
+  hasServerError: boolean = false;
+
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -30,7 +34,24 @@ export class RoleUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.findRoleById();
+    this.openRoleSubscription();
+  }
+
+  ngOnDestroy(): void {
+    this.roleSubscription.unsubscribe();
+  }
+
+  openRoleSubscription() {
+    this.id = this.activatedRoute.snapshot.params['id'];
+    this.roleSubscription = this.roleService.roles$.subscribe({
+      next: (roles) => {
+        if(roles.length > 0) {
+          this.role = roles.find(role => role.id == this.id)!;
+          this.fillForm();
+        }
+      },
+      error: (error) => this.hasServerError = true
+    })
   }
 
   initializeForm() {
@@ -38,12 +59,6 @@ export class RoleUpdateComponent implements OnInit {
       id: ['', [Validators.required]],
       name: ['', [Validators.required, Validators.minLength(2)]]
     });
-  }
-
-  async findRoleById() {
-    this.id = this.activatedRoute.snapshot.params['id'];
-    this.role = await firstValueFrom(this.roleService.findById(this.id));
-    this.fillForm();
   }
 
   fillForm() {

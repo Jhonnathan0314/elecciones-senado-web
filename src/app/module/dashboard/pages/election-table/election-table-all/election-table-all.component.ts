@@ -51,7 +51,6 @@ export class ElectionTableAllComponent implements OnInit, OnChanges, OnDestroy {
   openElectionTableSubscription() {
     this.electionTableSubscription = this.electionTableService.electionTables$.subscribe({
       next: (electionTables) => {
-        console.log("ELECTION TABLE: recibi openElectionTableSubscription");
         this.electionTables = electionTables;
         this.addCitiesDepartments();
       },
@@ -62,7 +61,6 @@ export class ElectionTableAllComponent implements OnInit, OnChanges, OnDestroy {
   openDepartmentSubscription() {
     this.departmentSubscription = this.departmentService.departments$.subscribe({
       next: (departments) => {
-        console.log("ELECTION TABLE: recibi openDepartmentSubscription");
         this.departments = departments;
         this.addCitiesDepartments();
       },
@@ -73,7 +71,6 @@ export class ElectionTableAllComponent implements OnInit, OnChanges, OnDestroy {
   openCitySubscription() {
     this.citySubscription = this.cityService.cities$.subscribe({
       next: (cities) => {
-        console.log("ELECTION TABLE: recibi openCitySubscription");
         this.cities = cities;
         this.addCitiesDepartments();
       },
@@ -83,7 +80,6 @@ export class ElectionTableAllComponent implements OnInit, OnChanges, OnDestroy {
 
   addCitiesDepartments() {
     if(this.electionTables.length > 0 && this.cities.length > 0 && this.departments.length > 0){
-      console.log("ELECTION TABLE: Realice addCitiesDepartments");
       let department = new Department();
       let city = new City();
       this.electionTables.forEach(electionTable => {

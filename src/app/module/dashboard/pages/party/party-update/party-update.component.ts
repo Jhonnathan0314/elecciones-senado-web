@@ -1,6 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Party } from 'src/app/core/models/results.model';
 import { PartyService } from 'src/app/core/services/results/party/party.service';
 
@@ -9,7 +10,7 @@ import { PartyService } from 'src/app/core/services/results/party/party.service'
   templateUrl: './party-update.component.html',
   styleUrls: ['./party-update.component.scss']
 })
-export class PartyUpdateComponent implements OnInit {
+export class PartyUpdateComponent implements OnInit, OnDestroy {
 
   @ViewChild("nameInput") nameInput: ElementRef;
   @ViewChild("mottoInput") mottoInput: ElementRef;
@@ -23,6 +24,10 @@ export class PartyUpdateComponent implements OnInit {
 
   documentTypes: DocumentType[] = [];
 
+  partySuscription: Subscription;
+
+  hasServerError: boolean = false;
+
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -32,7 +37,24 @@ export class PartyUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.findPartyById();
+    this.openPartySubscription();
+  }
+
+  ngOnDestroy(): void {
+    this.partySuscription.unsubscribe();
+  }
+
+  openPartySubscription() {
+    this.id = this.activatedRoute.snapshot.params['id'];
+    this.partySuscription = this.partyService.parties$.subscribe({
+      next: (parties) => {
+        if(parties.length > 0) {
+          this.party = parties.find(party => party.id == this.id)!;
+          this.fillForm();
+        }
+      },
+      error: (error) => this.hasServerError = true
+    })
   }
 
   initializeForm() {
@@ -41,19 +63,6 @@ export class PartyUpdateComponent implements OnInit {
       motto: ['', [Validators.required, Validators.minLength(2)]],
       logo: ['']
     });
-  }
-
-  findPartyById() {
-    this.id = this.activatedRoute.snapshot.params['id'];
-    this.partyService.findById(this.id).subscribe({
-      next: (party) => {
-        this.party = party;
-        this.fillForm();
-      },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
-    })
   }
 
   fillForm() {
