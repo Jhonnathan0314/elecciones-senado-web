@@ -1,4 +1,4 @@
-<div class="box">
+<div class="box" *ngIf="parties.length > 0 && !hasServerError">
   <div class="main-row row-left" (click)="move_left()">
     <img src="assets/img/previous.png" alt="previous" />
   </div>
@@ -35,3 +35,5 @@
     </div>
   </div>
 </div>
+<span *ngIf="!hasServerError && parties.length === 0">No se ha encontrado información.</span>
+<span *ngIf="hasServerError" class="error-text">Ha ocurrido un error en el sistema, intente nuevamente mas tarde.</span>

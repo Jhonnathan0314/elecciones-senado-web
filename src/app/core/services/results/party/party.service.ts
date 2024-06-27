@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ApiResponse } from 'src/app/core/models/response.model';
+import { BehaviorSubject, Observable, catchError, map, tap, throwError } from 'rxjs';
+import { ApiResponse, ErrorMessage } from 'src/app/core/models/response.model';
 import { Party } from 'src/app/core/models/results.model';
 import { environment } from 'src/environments/environment';
 
@@ -10,34 +10,84 @@ import { environment } from 'src/environments/environment';
 })
 export class PartyService {
 
-  apigatewayUrl = '';
+  apigatewayUrl = environment.APIGATEWAY_URL + environment.APIGATEWAY_PATH + environment.RESULTS_PATH;
+
+  private partySubject = new BehaviorSubject<Party[]>([]);
+  parties$: Observable<Party[]> = this.partySubject.asObservable();
 
   constructor(private http: HttpClient) {
-    this.apigatewayUrl = environment.APIGATEWAY_URL + environment.APIGATEWAY_PATH + environment.RESULTS_PATH;
+    this.findAll();
   }
 
-  findAll(): Observable<ApiResponse<Party[]>> {
-    return this.http.get<ApiResponse<Party[]>>(`${this.apigatewayUrl}/party`);
+  private handleError(error: any): Observable<never> {
+    console.error("An error occurred:", error);
+    return throwError(() => new ErrorMessage(this.mapError(error)));
   }
 
-  findById(id: number): Observable<ApiResponse<Party>> {
-    return this.http.get<ApiResponse<Party>>(`${this.apigatewayUrl}/party/${id}`);
+  private mapError(error: any): ErrorMessage {
+    if(error.error.error.code) return error.error.error;
+    
+    return {
+      code: error.status,
+      title: error.statusText,
+      detail: error.message
+    }
   }
 
-  create(party: Party): Observable<ApiResponse<Party>> {
-    return this.http.post<ApiResponse<Party>>(`${this.apigatewayUrl}/party`, party);
+  findAll() {
+    this.http.get<ApiResponse<Party[]>>(`${this.apigatewayUrl}/party`)
+      .pipe(
+        map(response => response.data)
+      )
+      .subscribe({
+        next: (parties) => this.partySubject.next(parties),
+        error: (err) => this.partySubject.error(this.mapError(err))
+      });
   }
 
-  update(party: Party): Observable<ApiResponse<Party>> {
-    return this.http.put<ApiResponse<Party>>(`${this.apigatewayUrl}/party`, party);
+  findById(id: number): Observable<Party> {
+    return this.http.get<ApiResponse<Party>>(`${this.apigatewayUrl}/party/${id}`)
+      .pipe(
+        map(response => response.data),
+        catchError(error => this.handleError(error))
+      );
+  }
+
+  create(party: Party): Observable<Party> {
+    return this.http.post<ApiResponse<Party>>(`${this.apigatewayUrl}/party`, party)
+      .pipe(
+        map(response => response.data),
+        tap(newParty => this.partySubject.next([...this.partySubject.value, newParty])),
+        catchError(error => this.handleError(error))
+      );
+  }
+
+  update(party: Party): Observable<Party> {
+    return this.http.put<ApiResponse<Party>>(`${this.apigatewayUrl}/party`, party)
+      .pipe(
+        map(response => response.data),
+        tap(updatedParty => {
+          const parties = this.partySubject.value.map(party => party.id === updatedParty.id ? updatedParty : party);
+          this.partySubject.next(parties);
+        }),
+        catchError(error => this.handleError(error))
+      );
   }
 
   deleteById(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apigatewayUrl}/party/delete/${id}`);
+    return this.http.delete<void>(`${this.apigatewayUrl}/party/delete/${id}`)
+      .pipe(
+        tap(() => {
+          const parties = this.partySubject.value.filter(party => party.id !== id);
+          this.partySubject.next(parties);
+        }),
+        catchError(error => this.handleError(error))
+      );
   }
 
   changeStateById(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apigatewayUrl}/party/change-state/${id}`);
+    return this.http.delete<void>(`${this.apigatewayUrl}/party/change-state/${id}`)
+      .pipe(catchError(error => this.handleError(error)));
   }
 
 }

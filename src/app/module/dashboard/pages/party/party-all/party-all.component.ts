@@ -1,5 +1,6 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Party } from 'src/app/core/models/results.model';
 import { PartyService } from 'src/app/core/services/results/party/party.service';
 
@@ -8,9 +9,13 @@ import { PartyService } from 'src/app/core/services/results/party/party.service'
   templateUrl: './party-all.component.html',
   styleUrls: ['./party-all.component.scss']
 })
-export class PartyAllComponent implements OnInit {
+export class PartyAllComponent implements OnInit, OnDestroy {
 
   parties: Party[] = [];
+
+  partySubscription: Subscription;
+
+  hasServerError: boolean = false;
 
   constructor(
     private router: Router,
@@ -18,17 +23,17 @@ export class PartyAllComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.findAll();
+    this.openPartySubscription();
   }
 
-  findAll() {
-    this.partyService.findAll().subscribe({
-      next: (response) => {
-        this.parties = response.data;
-      },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
+  ngOnDestroy(): void {
+      this.partySubscription.unsubscribe();
+  }
+
+  openPartySubscription() {
+    this.partySubscription = this.partyService.parties$.subscribe({
+      next: (parties) => this.parties = parties,
+      error: (error) => this.hasServerError = true
     })
   }
 
@@ -38,12 +43,7 @@ export class PartyAllComponent implements OnInit {
 
   delete(id: number) {
     this.partyService.deleteById(id).subscribe({
-      next: (response) => {
-        this.ngOnInit();
-      },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
+      error: (error) => this.hasServerError = true
     })
   }
 

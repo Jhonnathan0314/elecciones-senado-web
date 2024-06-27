@@ -11,6 +11,7 @@ export class CarouselComponent {
   @ViewChild("carouselContainer") carouselContainer: ElementRef;
 
   @Input() parties: Party[] = [];
+  @Input() hasServerError: boolean = false;
 
   @Output() updateClick = new EventEmitter<number>();
   @Output() deleteClick = new EventEmitter<number>();

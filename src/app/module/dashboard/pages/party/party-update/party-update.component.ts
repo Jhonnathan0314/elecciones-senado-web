@@ -46,8 +46,8 @@ export class PartyUpdateComponent implements OnInit {
   findPartyById() {
     this.id = this.activatedRoute.snapshot.params['id'];
     this.partyService.findById(this.id).subscribe({
-      next: (response) => {
-        this.party = response.data;
+      next: (party) => {
+        this.party = party;
         this.fillForm();
       },
       error: (error) => {

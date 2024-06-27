@@ -1,6 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Candidate, Party } from 'src/app/core/models/results.model';
 import { CandidateService } from 'src/app/core/services/results/candidate/candidate.service';
 import { PartyService } from 'src/app/core/services/results/party/party.service';
@@ -10,7 +11,7 @@ import { PartyService } from 'src/app/core/services/results/party/party.service'
   templateUrl: './candidate-update.component.html',
   styleUrls: ['./candidate-update.component.scss']
 })
-export class CandidateUpdateComponent implements OnInit {
+export class CandidateUpdateComponent implements OnInit, OnDestroy {
 
   @ViewChild("cardNumberInput") cardNumberInput: ElementRef;
   @ViewChild("resolutionNumberInput") resolutionNumberInput: ElementRef;
@@ -26,6 +27,10 @@ export class CandidateUpdateComponent implements OnInit {
   candidate: Candidate = new Candidate();
   parties: Party[] = [];
 
+  partySubscription: Subscription;
+
+  hasServerError: boolean = false;
+
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -35,19 +40,19 @@ export class CandidateUpdateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.findAllParties();
+    this.openPartySubscription();
     this.initializeForm();
     this.findCandidateById();
   }
 
-  findAllParties() {
-    this.partyService.findAll().subscribe({
-      next: (response) => {
-        this.parties = response.data;
-      },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
+  ngOnDestroy(): void {
+    this.partySubscription.unsubscribe();
+  }
+
+  openPartySubscription() {
+    this.partySubscription = this.partyService.parties$.subscribe({
+      next: (parties) => this.parties = parties,
+      error: (error) => this.hasServerError = true
     })
   }
 

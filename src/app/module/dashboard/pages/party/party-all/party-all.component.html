@@ -1,2 +1,2 @@
 <h1>Partidos</h1>
-<app-carousel [parties]="parties" (updateClick)="update($event)" (deleteClick)="delete($event)"></app-carousel>
+<app-carousel [parties]="parties" [hasServerError]="hasServerError" (updateClick)="update($event)" (deleteClick)="delete($event)"></app-carousel>
