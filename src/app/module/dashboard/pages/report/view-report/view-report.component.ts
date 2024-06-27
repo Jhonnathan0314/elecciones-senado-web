@@ -22,6 +22,8 @@ export class ViewReportComponent implements OnInit, OnDestroy {
 
   candidateReportSubscription: Subscription;
   electionTableReportSubscription: Subscription;
+  departmentSubscription: Subscription;
+  citySubscription: Subscription;
 
   hasServerError: boolean = false;
 
@@ -34,11 +36,15 @@ export class ViewReportComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.openCandidateReportSubscription();
     this.openElectionTableReportSubscription();
+    this.openCitySubscription();
+    this.openDepartmentSubscription();
   }
 
   ngOnDestroy(): void {
       this.candidateReportSubscription.unsubscribe();
       this.electionTableReportSubscription.unsubscribe();
+      this.citySubscription.unsubscribe();
+      this.departmentSubscription.unsubscribe();
   }
 
   openCandidateReportSubscription() {
@@ -51,48 +57,44 @@ export class ViewReportComponent implements OnInit, OnDestroy {
   openElectionTableReportSubscription() {
     this.electionTableReportSubscription = this.reportService.electionTableReport$.subscribe({
       next: (report) => {
+        console.log("REPORT: Realice openElectionTableReportSubscription");
         this.electionTableReport = report;
-        if(this.electionTableReport.length > 0 && this.cities.length === 0) this.findAllCities();
+        this.fillCitiesDepartments();
       },
       error: (error) => this.hasServerError = true
     })
   }
 
-  findAllCities() {
-    this.cityService.findAll().subscribe({
-      next: (res) => {
-        this.cities = res.data;
-        this.findAllDepartments();
+  openCitySubscription() {
+    this.citySubscription = this.cityService.cities$.subscribe({
+      next: (cities) => {
+        console.log("REPORT: Realice openCitySubscription");
+        this.cities = cities
+        this.fillCitiesDepartments();
       },
-      error: (error) => {
-        console.log("Error: ", error);
-      }
+      error: (error) => this.hasServerError = true
     })
   }
 
-  findAllDepartments() {
-    this.departmentService.findAll().subscribe({
-      next: (res) => {
-        this.departments = res.data;
-        this.fillCities();
+  openDepartmentSubscription() {
+    this.departmentSubscription = this.departmentService.departments$.subscribe({
+      next: (departments) => {
+        console.log("REPORT: Realice openDepartmentSubscription");
+        this.departments = departments;
+        this.fillCitiesDepartments();
       },
-      error: (error) => {
-        console.log("Error: ", error);
-      }
+      error: (error) => this.hasServerError = true
     })
   }
 
-  fillCities() {
-    this.electionTableReport.forEach(report => {
-      report.city = this.cities.find(city => city.id == report.cityId);
-    });
-    this.fillDepartments();
-  }
-
-  fillDepartments() {
-    this.electionTableReport.forEach(report => {
-      report.department = this.departments.find(department => department.id == report.city?.departmentId);
-    });
+  fillCitiesDepartments() {
+    if(this.electionTableReport.length > 0 && this.cities.length > 0 && this.departments.length > 0){
+      console.log("REPORT: Realice fillCitiesDepartments");
+      this.electionTableReport.forEach(report => {
+        report.city = this.cities.find(city => city.id == report.cityId);
+        report.department = this.departments.find(department => department.id == report.city?.departmentId);
+      });
+    }
   }
 
 }

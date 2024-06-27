@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { City, Department, ElectionTable } from 'src/app/core/models/results.model';
 import { CityService } from 'src/app/core/services/results/city/city.service';
 import { DepartmentService } from 'src/app/core/services/results/department/department.service';
@@ -28,6 +29,10 @@ export class ElectionTableCreateComponent implements OnInit {
 
   departmentSelected: boolean = false;
 
+  departmentSubscription: Subscription;
+
+  hasServerError: boolean = false;
+
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
@@ -38,24 +43,20 @@ export class ElectionTableCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.findAllDepartments();
+    this.openDepartmentSubscription();
   }
 
-  findAllDepartments() {
-    this.departmentService.findAll().subscribe({
-      next: (res) => {
-        this.departments = res.data;
-      },
-      error: (error) => {
-        console.log("Error: ", error);
-      }
+  openDepartmentSubscription() {
+    this.departmentSubscription = this.departmentService.departments$.subscribe({
+      next: (departments) => this.departments = departments,
+      error: (error) => this.hasServerError = true
     })
   }
 
   findCitiesByDepartments() {
     this.cityService.findByDepartment(this.createForm.value.departmentId).subscribe({
-      next: (res) => {
-        this.cities = res.data;
+      next: (cities) => {
+        this.cities = cities;
         this.departmentSelected = true;
       },
       error: (error) => {

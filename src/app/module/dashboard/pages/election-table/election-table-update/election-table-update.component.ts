@@ -1,6 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { City, Department, ElectionTable } from 'src/app/core/models/results.model';
 import { CityService } from 'src/app/core/services/results/city/city.service';
 import { DepartmentService } from 'src/app/core/services/results/department/department.service';
@@ -11,7 +12,7 @@ import { ElectionTableService } from 'src/app/core/services/results/election-tab
   templateUrl: './election-table-update.component.html',
   styleUrls: ['./election-table-update.component.scss']
 })
-export class ElectionTableUpdateComponent implements OnInit {
+export class ElectionTableUpdateComponent implements OnInit, OnDestroy {
 
   @ViewChild("numberIdsInput") numberIdsInput: ElementRef;
   @ViewChild("totalVotesInput") totalVotesInput: ElementRef;
@@ -30,6 +31,10 @@ export class ElectionTableUpdateComponent implements OnInit {
 
   departmentSelected: boolean = true;
 
+  departmentSubscription: Subscription;
+
+  hasServerError: boolean = false;
+
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -42,6 +47,21 @@ export class ElectionTableUpdateComponent implements OnInit {
   ngOnInit(): void {
     this.initializeForm();
     this.findElectionTableById();
+    this.openDepartmentSubscription();
+  }
+
+  ngOnDestroy(): void {
+      this.departmentSubscription.unsubscribe();
+  }
+
+  openDepartmentSubscription() {
+    this.departmentSubscription = this.departmentService.departments$.subscribe({
+      next: (departments) => {
+        this.departments = departments;
+        this.findCityById();
+      },
+      error: (error) => this.hasServerError = true
+    })
   }
 
   initializeForm() {
@@ -58,7 +78,6 @@ export class ElectionTableUpdateComponent implements OnInit {
     this.electionTableService.findById(this.id).subscribe({
       next: (electionTable) => {
         this.electionTable = electionTable;
-        this.findAllDepartments();
       },
       error: (error) => {
         console.log("Error: ", error.statusText);
@@ -66,22 +85,10 @@ export class ElectionTableUpdateComponent implements OnInit {
     })
   }
 
-  findAllDepartments() {
-    this.departmentService.findAll().subscribe({
-      next: (res) => {
-        this.departments = res.data;
-        this.findCityById();
-      },
-      error: (error) => {
-        console.log("Error: ", error);
-      }
-    })
-  }
-
   findCityById() {
     this.cityService.findById(this.electionTable.cityId).subscribe({
-      next: (res) => {
-        this.electionTable.city = res.data;
+      next: (city) => {
+        this.electionTable.city = city;
         this.findCitiesByDepartmentId(this.electionTable.city.departmentId);
         this.fillForm();
       },
@@ -102,8 +109,8 @@ export class ElectionTableUpdateComponent implements OnInit {
 
   findCitiesByDepartmentId(id: number) {
     this.cityService.findByDepartment(id).subscribe({
-      next: (res) => {
-        this.cities = res.data;
+      next: (cities) => {
+        this.cities = cities;
         this.departmentSelected = true;
       },
       error: (error) => {
@@ -115,8 +122,8 @@ export class ElectionTableUpdateComponent implements OnInit {
 
   findCitiesByDepartment() {
     this.cityService.findByDepartment(this.updateForm.value.departmentId).subscribe({
-      next: (res) => {
-        this.cities = res.data;
+      next: (cities) => {
+        this.cities = cities;
         this.departmentSelected = true;
       },
       error: (error) => {

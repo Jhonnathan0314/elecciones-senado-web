@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { City, Department, ElectionTable } from 'src/app/core/models/results.model';
@@ -11,7 +11,7 @@ import { ElectionTableService } from 'src/app/core/services/results/election-tab
   templateUrl: './election-table-all.component.html',
   styleUrls: ['./election-table-all.component.scss']
 })
-export class ElectionTableAllComponent implements OnInit, OnDestroy {
+export class ElectionTableAllComponent implements OnInit, OnChanges, OnDestroy {
 
   electionTables: ElectionTable[] = [];
 
@@ -19,8 +19,11 @@ export class ElectionTableAllComponent implements OnInit, OnDestroy {
   cities: City[] = [];
 
   electionTableSubscription: Subscription;
+  departmentSubscription: Subscription;
+  citySubscription: Subscription;
 
   hasServerError: boolean = false;
+  isLoading: boolean = true;
 
   constructor(
     private router: Router,
@@ -31,55 +34,65 @@ export class ElectionTableAllComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.openElectionTableSubscription();
+    this.openDepartmentSubscription();
+    this.openCitySubscription();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+      console.log("recibi cambios");
   }
 
   ngOnDestroy(): void {
-      this.electionTableSubscription.unsubscribe();
+    this.electionTableSubscription.unsubscribe();
+    this.departmentSubscription.unsubscribe();
+    this.citySubscription.unsubscribe();
   }
 
   openElectionTableSubscription() {
     this.electionTableSubscription = this.electionTableService.electionTables$.subscribe({
       next: (electionTables) => {
+        console.log("ELECTION TABLE: recibi openElectionTableSubscription");
         this.electionTables = electionTables;
-        if(electionTables.length > 0 && this.cities.length === 0) this.findAllCities();
+        this.addCitiesDepartments();
       },
       error: (error) => this.hasServerError = true
     })
   }
 
-  async findAllDepartments() {
-    this.departmentService.findAll().subscribe({
-      next: (res) => {
-        this.departments = res.data;
+  openDepartmentSubscription() {
+    this.departmentSubscription = this.departmentService.departments$.subscribe({
+      next: (departments) => {
+        console.log("ELECTION TABLE: recibi openDepartmentSubscription");
+        this.departments = departments;
         this.addCitiesDepartments();
       },
-      error: (error) => {
-        console.log("Error: ", error);
-      }
+      error: (error) => this.hasServerError = true
     })
   }
 
-  async findAllCities() {
-    this.cityService.findAll().subscribe({
-      next: (res) => {
-        this.cities = res.data;
-        this.findAllDepartments();
+  openCitySubscription() {
+    this.citySubscription = this.cityService.cities$.subscribe({
+      next: (cities) => {
+        console.log("ELECTION TABLE: recibi openCitySubscription");
+        this.cities = cities;
+        this.addCitiesDepartments();
       },
-      error: (error) => {
-        console.log("Error: ", error);
-      }
+      error: (error) => this.hasServerError = true
     })
   }
 
-  async addCitiesDepartments() {
-    let department = new Department();
-    let city = new City();
-    this.electionTables.forEach(electionTable => {
-      city = this.cities.find(city => city.id === electionTable.cityId) || new City();
-      department = this.departments.find(department => department.id === city.departmentId) || new Department();
-      electionTable.city = city;
-      electionTable.city.department = department;
-    })
+  addCitiesDepartments() {
+    if(this.electionTables.length > 0 && this.cities.length > 0 && this.departments.length > 0){
+      console.log("ELECTION TABLE: Realice addCitiesDepartments");
+      let department = new Department();
+      let city = new City();
+      this.electionTables.forEach(electionTable => {
+        city = this.cities.find(city => city.id === electionTable.cityId) || new City();
+        department = this.departments.find(department => department.id === city.departmentId) || new Department();
+        electionTable.city = city;
+        electionTable.city.department = department;
+      })
+    }
   }
 
   update(id: number) {
