@@ -26,6 +26,7 @@ export class ResultCreateComponent implements OnInit, OnDestroy {
   candidates: Candidate[] = [];
 
   electionTableSubscription: Subscription;
+  candidateSubscription: Subscription;
 
   hasServerError: boolean = false;
 
@@ -39,12 +40,13 @@ export class ResultCreateComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.openElectionTableSubscription();
-    this.findAllCandidates();
+    this.openCandidateSubscription();
     this.initializeForm();
   }
 
   ngOnDestroy(): void {
       this.electionTableSubscription.unsubscribe();
+      this.candidateSubscription.unsubscribe();
   }
 
   openElectionTableSubscription() {
@@ -54,14 +56,10 @@ export class ResultCreateComponent implements OnInit, OnDestroy {
     })
   }
 
-  findAllCandidates() {
-    this.candidateService.findAll().subscribe({
-      next: (response) => {
-        this.candidates = response.data;
-      },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
+  openCandidateSubscription() {
+    this.candidateSubscription = this.candidateService.candidates$.subscribe({
+      next: (candidates) => this.candidates = candidates,
+      error: (error) => this.hasServerError = true
     })
   }
 

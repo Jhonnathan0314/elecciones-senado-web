@@ -69,8 +69,8 @@ export class CandidateUpdateComponent implements OnInit, OnDestroy {
   findCandidateById() {
     this.id = this.activatedRoute.snapshot.params['id'];
     this.candidateService.findById(this.id).subscribe({
-      next: (response) => {
-        this.candidate = response.data;
+      next: (candidate) => {
+        this.candidate = candidate;
         this.fillForm();
       },
       error: (error) => {
