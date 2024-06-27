@@ -1,7 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { last } from 'rxjs';
+import { Subscription, last } from 'rxjs';
 import { RegisterRequest } from 'src/app/core/models/authentication.model';
 import { DocumentType, Role, User } from 'src/app/core/models/security.model';
 import { DocumentTypeService } from 'src/app/core/services/security/document-type/document-type.service';
@@ -12,7 +12,7 @@ import { UserService } from 'src/app/core/services/security/user/user.service';
   templateUrl: './user-create.component.html',
   styleUrls: ['./user-create.component.scss']
 })
-export class UserCreateComponent implements OnInit {
+export class UserCreateComponent implements OnInit, OnDestroy {
 
   @ViewChild("documentTypeInput") documentTypeInput: ElementRef;
   @ViewChild("documentNumberInput") documentNumberInput: ElementRef;
@@ -28,7 +28,11 @@ export class UserCreateComponent implements OnInit {
   createForm: FormGroup;
   user: RegisterRequest = new RegisterRequest();
 
+  docTypesSubscription: Subscription;
+
   documentTypes: DocumentType[] = [];
+
+  hasServerError: boolean = false;
 
   constructor(
     private router: Router,
@@ -38,18 +42,18 @@ export class UserCreateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.findAllDocTypes();
+    this.openDocTypesSubscription();
     this.initializeForm();
   }
 
-  findAllDocTypes() {
-    this.documentTypeService.findAll().subscribe({
-      next: (response) => {
-        this.documentTypes = response.data;
-      },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
+  ngOnDestroy(): void {
+      this.docTypesSubscription.unsubscribe();
+  }
+
+  openDocTypesSubscription() {
+    this.docTypesSubscription = this.documentTypeService.docTypes$.subscribe({
+      next: (docTypes) => this.documentTypes = docTypes,
+      error: (error) => this.hasServerError = true
     })
   }
 

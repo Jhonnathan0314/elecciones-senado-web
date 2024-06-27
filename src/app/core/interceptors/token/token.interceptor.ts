@@ -14,7 +14,7 @@ export class TokenInterceptor implements HttpInterceptor {
   constructor(private sessionService: SessionService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    if(request.url.includes("auth")) return next.handle(request.clone());
+    if(request.url.includes("auth") || request.url.includes("doc-type")) return next.handle(request.clone());
         
         const token = this.sessionService.getToken();
 

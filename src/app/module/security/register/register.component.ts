@@ -1,8 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { RegisterRequest } from 'src/app/core/models/authentication.model';
 import { DocumentType } from 'src/app/core/models/security.model';
 import { AuthenticationService } from 'src/app/core/services/security/authentication/authentication.service';
+import { DocumentTypeService } from 'src/app/core/services/security/document-type/document-type.service';
 import { SessionService } from 'src/app/core/services/utils/session/session.service';
 
 @Component({
@@ -10,7 +12,7 @@ import { SessionService } from 'src/app/core/services/utils/session/session.serv
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnDestroy {
 
   @ViewChild("documentTypeInput") documentTypeInput: ElementRef;
   @ViewChild("documentNumberInput") documentNumberInput: ElementRef;
@@ -23,18 +25,11 @@ export class RegisterComponent implements OnInit {
   @ViewChild("passwordError") passwordError: ElementRef;
   @ViewChild("duplicatedError") duplicatedError: ElementRef;
 
-  documentTypes: DocumentType[] = [
-    {
-      id: 1,
-      prefix: 'CC',
-      name: 'Cédula de ciudadania'
-    },
-    {
-      id: 2,
-      prefix: 'CE',
-      name: 'Cédula de extranjeria'
-    }
-  ]
+  docTypesSubscription: Subscription;
+
+  documentTypes: DocumentType[] = [];
+
+  hasServerError: boolean = false;
 
   registerForm: FormGroup;
 
@@ -43,19 +38,36 @@ export class RegisterComponent implements OnInit {
   constructor(
     private authenticationService: AuthenticationService, 
     private sessionService: SessionService,
+    private documentTypeService: DocumentTypeService,
     private formBuilder: FormBuilder
   ) { }
 
   ngOnInit(): void {
-      this.registerForm = this.formBuilder.group({
-        documentType: ['', [Validators.required]],
-        documentNumber: ['', [Validators.required]],
-        name: ['', [Validators.required]],
-        lastName: ['', [Validators.required]],
-        username: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.required, Validators.minLength(6)]],
-        confirmPassword: ['', [Validators.required, Validators.minLength(6)]]
-      })
+    this.openDocTypesSubscription();
+    this.initializeForm();
+  }
+
+  ngOnDestroy(): void {
+      this.docTypesSubscription.unsubscribe();
+  }
+
+  openDocTypesSubscription() {
+    this.docTypesSubscription = this.documentTypeService.docTypes$.subscribe({
+      next: (docTypes) => this.documentTypes = docTypes,
+      error: (error) => this.hasServerError = true
+    })
+  }
+
+  initializeForm() {
+    this.registerForm = this.formBuilder.group({
+      documentType: ['', [Validators.required]],
+      documentNumber: ['', [Validators.required]],
+      name: ['', [Validators.required]],
+      lastName: ['', [Validators.required]],
+      username: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required, Validators.minLength(6)]]
+    })
   }
 
   validateForm() {
