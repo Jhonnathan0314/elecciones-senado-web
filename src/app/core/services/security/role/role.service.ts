@@ -12,8 +12,7 @@ export class RoleService {
 
   apigatewayUrl = environment.APIGATEWAY_URL + environment.APIGATEWAY_PATH + environment.SECURITY_PATH;
 
-  roles: Role[] = [];
-  private roleSubject = new BehaviorSubject<Role[]>(this.roles);
+  private roleSubject = new BehaviorSubject<Role[]>([]);
   roles$: Observable<Role[]> = this.roleSubject.asObservable();
 
   constructor(private http: HttpClient) {

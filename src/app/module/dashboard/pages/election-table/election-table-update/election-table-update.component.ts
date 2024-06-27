@@ -56,8 +56,8 @@ export class ElectionTableUpdateComponent implements OnInit {
   findElectionTableById() {
     this.id = this.activatedRoute.snapshot.params['id'];
     this.electionTableService.findById(this.id).subscribe({
-      next: (response) => {
-        this.electionTable = response.data;
+      next: (electionTable) => {
+        this.electionTable = electionTable;
         this.findAllDepartments();
       },
       error: (error) => {

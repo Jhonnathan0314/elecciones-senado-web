@@ -1,6 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Candidate, ElectionTable, Result } from 'src/app/core/models/results.model';
 import { CandidateService } from 'src/app/core/services/results/candidate/candidate.service';
 import { ElectionTableService } from 'src/app/core/services/results/election-table/election-table.service';
@@ -11,7 +12,7 @@ import { ResultService } from 'src/app/core/services/results/result/result.servi
   templateUrl: './result-create.component.html',
   styleUrls: ['./result-create.component.scss']
 })
-export class ResultCreateComponent implements OnInit {
+export class ResultCreateComponent implements OnInit, OnDestroy {
 
   @ViewChild("votesInput") votesInput: ElementRef;
   @ViewChild("electionTableInput") electionTableInput: ElementRef;
@@ -24,6 +25,10 @@ export class ResultCreateComponent implements OnInit {
   electionTables: ElectionTable[] = [];
   candidates: Candidate[] = [];
 
+  electionTableSubscription: Subscription;
+
+  hasServerError: boolean = false;
+
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
@@ -33,19 +38,19 @@ export class ResultCreateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.findAllElectionTables();
+    this.openElectionTableSubscription();
     this.findAllCandidates();
     this.initializeForm();
   }
 
-  findAllElectionTables() {
-    this.electionTableService.findAll().subscribe({
-      next: (response) => {
-        this.electionTables = response.data;
-      },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
+  ngOnDestroy(): void {
+      this.electionTableSubscription.unsubscribe();
+  }
+
+  openElectionTableSubscription() {
+    this.electionTableSubscription = this.electionTableService.electionTables$.subscribe({
+      next: (electionTables) => this.electionTables = electionTables,
+      error: (error) => this.hasServerError = true
     })
   }
 

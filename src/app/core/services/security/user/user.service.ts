@@ -13,8 +13,7 @@ export class UserService {
 
   apigatewayUrl = environment.APIGATEWAY_URL + environment.APIGATEWAY_PATH + environment.SECURITY_PATH;
 
-  users: User[] = [];
-  private userSubject = new BehaviorSubject<User[]>(this.users);
+  private userSubject = new BehaviorSubject<User[]>([]);
   users$: Observable<User[]> = this.userSubject.asObservable();
 
   constructor(private http: HttpClient) {

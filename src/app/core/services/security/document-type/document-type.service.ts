@@ -12,8 +12,7 @@ export class DocumentTypeService {
 
   apigatewayUrl = environment.APIGATEWAY_URL + environment.APIGATEWAY_PATH + environment.SECURITY_PATH;
 
-  docTypes: DocumentType[] = [];
-  private docTypeSubject = new BehaviorSubject<DocumentType[]>(this.docTypes);
+  private docTypeSubject = new BehaviorSubject<DocumentType[]>([]);
   docTypes$: Observable<DocumentType[]> = this.docTypeSubject.asObservable();
 
   constructor(private http: HttpClient) {

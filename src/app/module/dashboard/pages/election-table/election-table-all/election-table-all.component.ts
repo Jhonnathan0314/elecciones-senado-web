@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { City, Department, ElectionTable } from 'src/app/core/models/results.model';
 import { CityService } from 'src/app/core/services/results/city/city.service';
 import { DepartmentService } from 'src/app/core/services/results/department/department.service';
@@ -10,12 +11,16 @@ import { ElectionTableService } from 'src/app/core/services/results/election-tab
   templateUrl: './election-table-all.component.html',
   styleUrls: ['./election-table-all.component.scss']
 })
-export class ElectionTableAllComponent implements OnInit {
+export class ElectionTableAllComponent implements OnInit, OnDestroy {
 
   electionTables: ElectionTable[] = [];
 
   departments: Department[] = [];
   cities: City[] = [];
+
+  electionTableSubscription: Subscription;
+
+  hasServerError: boolean = false;
 
   constructor(
     private router: Router,
@@ -25,18 +30,20 @@ export class ElectionTableAllComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.findAll();
+    this.openElectionTableSubscription();
   }
 
-  findAll() {
-    this.electionTableService.findAll().subscribe({
-      next: (response) => {
-        this.electionTables = response.data;
-        this.findAllCities();
+  ngOnDestroy(): void {
+      this.electionTableSubscription.unsubscribe();
+  }
+
+  openElectionTableSubscription() {
+    this.electionTableSubscription = this.electionTableService.electionTables$.subscribe({
+      next: (electionTables) => {
+        this.electionTables = electionTables;
+        if(electionTables.length > 0 && this.cities.length === 0) this.findAllCities();
       },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
+      error: (error) => this.hasServerError = true
     })
   }
 
@@ -81,12 +88,7 @@ export class ElectionTableAllComponent implements OnInit {
 
   delete(id: number) {
     this.electionTableService.deleteById(id).subscribe({
-      next: (response) => {
-        this.ngOnInit();
-      },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
+      error: (error) => this.hasServerError = true
     })
   }
 
