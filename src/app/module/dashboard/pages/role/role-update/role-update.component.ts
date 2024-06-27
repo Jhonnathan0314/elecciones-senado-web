@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { Role } from 'src/app/core/models/security.model';
 import { RoleService } from 'src/app/core/services/security/role/role.service';
 
@@ -39,17 +40,10 @@ export class RoleUpdateComponent implements OnInit {
     });
   }
 
-  findRoleById() {
+  async findRoleById() {
     this.id = this.activatedRoute.snapshot.params['id'];
-    this.roleService.findById(this.id).subscribe({
-      next: (response) => {
-        this.role = response.data;
-        this.fillForm();
-      },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
-    })
+    this.role = await firstValueFrom(this.roleService.findById(this.id));
+    this.fillForm();
   }
 
   fillForm() {

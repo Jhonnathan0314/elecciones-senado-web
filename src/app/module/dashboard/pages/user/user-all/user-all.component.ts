@@ -27,20 +27,14 @@ export class UserAllComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.closeUserSubscription();
+    this.userSubscription.unsubscribe();
   }
 
   openUserSubscription() {
     this.userSubscription = this.userService.users$.subscribe({
       next: (users) => this.users = users,
-      error: (error) => {
-        this.hasServerError = true;
-      }
+      error: (error) => this.hasServerError = true
     });
-  }
-
-  closeUserSubscription() {
-    this.userSubscription.unsubscribe();
   }
 
   update(id: number) {

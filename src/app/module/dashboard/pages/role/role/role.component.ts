@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Role } from 'src/app/core/models/security.model';
 import { RoleService } from 'src/app/core/services/security/role/role.service';
 
@@ -8,9 +9,13 @@ import { RoleService } from 'src/app/core/services/security/role/role.service';
   templateUrl: './role.component.html',
   styleUrls: ['./role.component.scss']
 })
-export class RoleComponent {
+export class RoleComponent implements OnInit, OnDestroy {
 
   roles: Role[] = [];
+
+  roleSubscription: Subscription;
+
+  hasServerError: boolean = false;
 
   constructor(
     private router: Router,
@@ -18,17 +23,17 @@ export class RoleComponent {
   ) { }
 
   ngOnInit(): void {
-    this.findAll();
+    this.openRoleSubscription();
   }
 
-  findAll() {
-    this.roleService.findAll().subscribe({
-      next: (response) => {
-        this.roles = response.data;
-      },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
+  ngOnDestroy(): void {
+      this.roleSubscription.unsubscribe();
+  }
+
+  openRoleSubscription() {
+    this.roleSubscription = this.roleService.roles$.subscribe({
+      next: (roles) => this.roles = roles,
+      error: (error) => this.hasServerError = true
     })
   }
 
@@ -38,12 +43,7 @@ export class RoleComponent {
 
   delete(id: number) {
     this.roleService.deleteById(id).subscribe({
-      next: (response) => {
-        this.ngOnInit();
-      },
-      error: (error) => {
-        console.log("Error: ", error.statusText);
-      }
+      error: (error) => this.hasServerError = true
     })
   }
 

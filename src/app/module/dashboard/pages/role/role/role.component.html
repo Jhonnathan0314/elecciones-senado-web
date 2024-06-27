@@ -1,6 +1,6 @@
 <h1>Roles</h1>
 <div class="table">
-    <table>
+    <table *ngIf="roles.length > 0 && !hasServerError">
         <thead>
             <tr>
                 <th>Id</th>
@@ -18,4 +18,6 @@
             </tr>
         </tbody>
     </table>
+    <span *ngIf="!hasServerError && roles.length === 0">No se ha encontrado información.</span>
+    <span *ngIf="hasServerError" class="error-text">Ha ocurrido un error en el sistema, intente nuevamente mas tarde.</span>
 </div>

@@ -27,17 +27,13 @@ export class UserService {
   }
 
   private mapError(error: any): ErrorMessage {
-    let errorMapped: ErrorMessage;
-    if(error.error.error.code) {
-      errorMapped = error.error.error;
-    }else {
-      errorMapped = {
-        code: error.status,
-        title: error.statusText,
-        detail: error.message
-      }
+    if(error.error.error.code) return error.error.error;
+    
+    return {
+      code: error.status,
+      title: error.statusText,
+      detail: error.message
     }
-    return errorMapped;
   }
 
   private findAll() {
