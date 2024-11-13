@@ -2,6 +2,8 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.14.
 
+There are 2 branches, one with basic angular code, and another with advance angular code. This in order to compare the before and after, improving the code with advanced angular concepts.
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
