@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, catchError, map, tap, throwError } from 'r
 import { ApiResponse, ErrorMessage } from 'src/app/core/models/response.model';
 import { Result } from 'src/app/core/models/results.model';
 import { environment } from 'src/environments/environment';
+import { SpinnerService } from '../../utils/spinner/spinner.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class ResultService {
   private resultSubject = new BehaviorSubject<Result[]>([]);
   results$: Observable<Result[]> = this.resultSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private spinnerService: SpinnerService) {
     this.findAll();
   }
 
@@ -34,14 +35,21 @@ export class ResultService {
     }
   }
 
-  findAll() {
+  private findAll() {
+    this.spinnerService.changeState(true);
     this.http.get<ApiResponse<Result[]>>(`${this.apigatewayUrl}/result`)
       .pipe(
         map(response => response.data)
       )
       .subscribe({
-        next: (results) => this.resultSubject.next(results),
-        error: (err) => this.resultSubject.error(this.mapError(err))
+        next: (results) => {
+          this.resultSubject.next(results);
+          this.spinnerService.changeState(false);
+        },
+        error: (err) => {
+          this.resultSubject.error(this.mapError(err));
+          this.spinnerService.changeState(false);
+        }
       });
   }
 

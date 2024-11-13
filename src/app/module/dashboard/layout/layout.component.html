@@ -3,6 +3,7 @@
         <app-topbar></app-topbar>
     </header>
     <section class="content flex-column">
+        <app-spinner *ngIf="loading" [ngClass]="loading ? 'spinner' : ''"></app-spinner>
         <router-outlet></router-outlet>
     </section>
 </div>

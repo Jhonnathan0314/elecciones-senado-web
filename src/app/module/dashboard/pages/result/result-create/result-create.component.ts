@@ -6,6 +6,7 @@ import { Candidate, ElectionTable, Result } from 'src/app/core/models/results.mo
 import { CandidateService } from 'src/app/core/services/results/candidate/candidate.service';
 import { ElectionTableService } from 'src/app/core/services/results/election-table/election-table.service';
 import { ResultService } from 'src/app/core/services/results/result/result.service';
+import { SpinnerService } from 'src/app/core/services/utils/spinner/spinner.service';
 
 @Component({
   selector: 'app-result-create',
@@ -35,7 +36,8 @@ export class ResultCreateComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private resultService: ResultService,
     private electionTableService: ElectionTableService,
-    private candidateService: CandidateService
+    private candidateService: CandidateService,
+    private spinnerService: SpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -110,12 +112,15 @@ export class ResultCreateComponent implements OnInit, OnDestroy {
   }
 
   create() {
+    this.spinnerService.changeState(true);
     this.resultService.create(this.result).subscribe({
       next: (response) => {
         this.router.navigateByUrl('/dashboard/result');
+        this.spinnerService.changeState(false);
       },
       error: (error) => {
         if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
+        this.spinnerService.changeState(false);
         console.log("error: ", error.statusText);
       }
     })

@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Party } from 'src/app/core/models/results.model';
 import { PartyService } from 'src/app/core/services/results/party/party.service';
+import { SpinnerService } from 'src/app/core/services/utils/spinner/spinner.service';
 
 @Component({
   selector: 'app-party-update',
@@ -32,7 +33,8 @@ export class PartyUpdateComponent implements OnInit, OnDestroy {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private partyService: PartyService
+    private partyService: PartyService,
+    private spinnerService: SpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -109,13 +111,16 @@ export class PartyUpdateComponent implements OnInit, OnDestroy {
   }
 
   update() {
+    this.spinnerService.changeState(true);
     this.partyService.update(this.party).subscribe({
       next: (response) => {
         this.router.navigateByUrl('/dashboard/party');
+        this.spinnerService.changeState(false);
       },
       error: (error) => {
         if(error.error.error.code == 406) this.noChangesError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
+        this.spinnerService.changeState(false);
         console.log("error: ", error.statusText);
       }
     })

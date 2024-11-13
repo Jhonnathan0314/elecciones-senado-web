@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription, firstValueFrom } from 'rxjs';
 import { User } from 'src/app/core/models/security.model';
 import { UserService } from 'src/app/core/services/security/user/user.service';
+import { SpinnerService } from 'src/app/core/services/utils/spinner/spinner.service';
 
 @Component({
   selector: 'app-user-all',
@@ -19,7 +20,8 @@ export class UserAllComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private spinnerService: SpinnerService
   ) { }
 
   ngOnInit(): void {
@@ -42,8 +44,15 @@ export class UserAllComponent implements OnInit, OnDestroy {
   }
 
   delete(id: number) {
+    this.spinnerService.changeState(true);
     this.userService.deleteById(id).subscribe({
-      error: (error) => this.hasServerError = true
+      next: () => {
+        this.spinnerService.changeState(false);
+      },
+      error: (error) => {
+        this.hasServerError = true;
+        this.spinnerService.changeState(false);
+      }
     });
   }
 

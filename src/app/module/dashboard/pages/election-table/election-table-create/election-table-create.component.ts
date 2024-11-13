@@ -6,6 +6,7 @@ import { City, Department, ElectionTable } from 'src/app/core/models/results.mod
 import { CityService } from 'src/app/core/services/results/city/city.service';
 import { DepartmentService } from 'src/app/core/services/results/department/department.service';
 import { ElectionTableService } from 'src/app/core/services/results/election-table/election-table.service';
+import { SpinnerService } from 'src/app/core/services/utils/spinner/spinner.service';
 
 @Component({
   selector: 'app-election-table-create',
@@ -38,7 +39,8 @@ export class ElectionTableCreateComponent implements OnInit {
     private formBuilder: FormBuilder,
     private electionTableService: ElectionTableService,
     private departmentService: DepartmentService,
-    private cityService: CityService
+    private cityService: CityService,
+    private spinnerService: SpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -121,13 +123,16 @@ export class ElectionTableCreateComponent implements OnInit {
   }
 
   create() {
+    this.spinnerService.changeState(true);
     this.electionTableService.create(this.electionTable).subscribe({
       next: (response) => {
         this.router.navigateByUrl('/dashboard/election-table');
+        this.spinnerService.changeState(false);
       },
       error: (error) => {
         if(error.error.error.code == 409) this.duplicatedError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
+        this.spinnerService.changeState(false);
         console.log("error: ", error.statusText);
       }
     })

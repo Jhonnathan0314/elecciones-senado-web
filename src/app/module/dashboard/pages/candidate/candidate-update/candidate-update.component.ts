@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { Candidate, Party } from 'src/app/core/models/results.model';
 import { CandidateService } from 'src/app/core/services/results/candidate/candidate.service';
 import { PartyService } from 'src/app/core/services/results/party/party.service';
+import { SpinnerService } from 'src/app/core/services/utils/spinner/spinner.service';
 
 @Component({
   selector: 'app-candidate-update',
@@ -37,7 +38,8 @@ export class CandidateUpdateComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
     private candidateService: CandidateService,
-    private partyService: PartyService
+    private partyService: PartyService,
+    private spinnerService: SpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -135,13 +137,16 @@ export class CandidateUpdateComponent implements OnInit, OnDestroy {
   }
 
   update() {
+    this.spinnerService.changeState(true);
     this.candidateService.update(this.candidate).subscribe({
       next: (response) => {
         this.router.navigateByUrl('/dashboard/candidate');
+        this.spinnerService.changeState(false);
       },
       error: (error) => {
         if(error.error.error.code == 406) this.noChangesError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
+        this.spinnerService.changeState(false);
         console.log("error: ", error.statusText);
       }
     })

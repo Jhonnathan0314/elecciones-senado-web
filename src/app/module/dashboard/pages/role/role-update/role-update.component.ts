@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, firstValueFrom } from 'rxjs';
 import { Role } from 'src/app/core/models/security.model';
 import { RoleService } from 'src/app/core/services/security/role/role.service';
+import { SpinnerService } from 'src/app/core/services/utils/spinner/spinner.service';
 
 @Component({
   selector: 'app-role-update',
@@ -29,7 +30,8 @@ export class RoleUpdateComponent implements OnInit, OnDestroy {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private roleService: RoleService
+    private roleService: RoleService,
+    private spinnerService: SpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -102,13 +104,16 @@ export class RoleUpdateComponent implements OnInit, OnDestroy {
   }
 
   create() {
+    this.spinnerService.changeState(true);
     this.roleService.update(this.role).subscribe({
       next: (response) => {
         this.router.navigateByUrl('/dashboard/role');
+        this.spinnerService.changeState(false);
       },
       error: (error) => {
         if(error.error.error.code == 406) this.noChangesError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
+        this.spinnerService.changeState(false);
         console.log("error: ", error.statusText);
       }
     })

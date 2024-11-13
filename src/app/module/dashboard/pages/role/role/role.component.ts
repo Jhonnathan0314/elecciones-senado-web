@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Role } from 'src/app/core/models/security.model';
 import { RoleService } from 'src/app/core/services/security/role/role.service';
+import { SpinnerService } from 'src/app/core/services/utils/spinner/spinner.service';
 
 @Component({
   selector: 'app-role',
@@ -19,7 +20,8 @@ export class RoleComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private roleService: RoleService
+    private roleService: RoleService,
+    private spinnerService: SpinnerService
   ) { }
 
   ngOnInit(): void {
@@ -42,8 +44,15 @@ export class RoleComponent implements OnInit, OnDestroy {
   }
 
   delete(id: number) {
+    this.spinnerService.changeState(true);
     this.roleService.deleteById(id).subscribe({
-      error: (error) => this.hasServerError = true
+      next: () => {
+        this.spinnerService.changeState(false);
+      },
+      error: (error) => {
+        this.hasServerError = true;
+        this.spinnerService.changeState(false);
+      }
     })
   }
 

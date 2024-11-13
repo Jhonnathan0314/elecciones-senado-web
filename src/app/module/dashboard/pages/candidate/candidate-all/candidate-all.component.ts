@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Candidate } from 'src/app/core/models/results.model';
 import { CandidateService } from 'src/app/core/services/results/candidate/candidate.service';
+import { SpinnerService } from 'src/app/core/services/utils/spinner/spinner.service';
 
 @Component({
   selector: 'app-candidate-all',
@@ -19,7 +20,8 @@ export class CandidateAllComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private candidateService: CandidateService
+    private candidateService: CandidateService,
+    private spinnerService: SpinnerService
   ) { }
 
   ngOnInit(): void {
@@ -42,8 +44,15 @@ export class CandidateAllComponent implements OnInit, OnDestroy {
   }
 
   delete(id: number) {
+    this.spinnerService.changeState(true);
     this.candidateService.deleteById(id).subscribe({
-      error: (error) => this.hasServerError = true
+      next: () => {
+        this.spinnerService.changeState(false);
+      },
+      error: (error) => {
+        this.hasServerError = true;
+        this.spinnerService.changeState(false);
+      }
     })
   }
 

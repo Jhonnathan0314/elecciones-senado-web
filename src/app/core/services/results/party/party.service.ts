@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, catchError, map, tap, throwError } from 'r
 import { ApiResponse, ErrorMessage } from 'src/app/core/models/response.model';
 import { Party } from 'src/app/core/models/results.model';
 import { environment } from 'src/environments/environment';
+import { SpinnerService } from '../../utils/spinner/spinner.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class PartyService {
   private partySubject = new BehaviorSubject<Party[]>([]);
   parties$: Observable<Party[]> = this.partySubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private spinnerService: SpinnerService) {
     this.findAll();
   }
 
@@ -34,14 +35,21 @@ export class PartyService {
     }
   }
 
-  findAll() {
+  private findAll() {
+    this.spinnerService.changeState(true);
     this.http.get<ApiResponse<Party[]>>(`${this.apigatewayUrl}/party`)
       .pipe(
         map(response => response.data)
       )
       .subscribe({
-        next: (parties) => this.partySubject.next(parties),
-        error: (err) => this.partySubject.error(this.mapError(err))
+        next: (parties) => {
+          this.partySubject.next(parties);
+          this.spinnerService.changeState(false);
+        },
+        error: (err) => {
+          this.partySubject.error(this.mapError(err));
+          this.spinnerService.changeState(false);
+        }
       });
   }
 

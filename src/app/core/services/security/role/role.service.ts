@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, catchError, find, map, tap, throwError } f
 import { ApiResponse, ErrorMessage } from 'src/app/core/models/response.model';
 import { Role } from 'src/app/core/models/security.model';
 import { environment } from 'src/environments/environment';
+import { SpinnerService } from '../../utils/spinner/spinner.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class RoleService {
   private roleSubject = new BehaviorSubject<Role[]>([]);
   roles$: Observable<Role[]> = this.roleSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private spinnerService: SpinnerService) {
     this.findAll();
   }
 
@@ -35,13 +36,20 @@ export class RoleService {
   }
 
   private findAll() {
+    this.spinnerService.changeState(true);
     this.http.get<ApiResponse<Role[]>>(`${this.apigatewayUrl}/role`)
       .pipe(
         map(response => response.data)
       )
       .subscribe({
-        next: (roles) => this.roleSubject.next(roles),
-        error: (error) => this.roleSubject.error(this.mapError(error))
+        next: (roles) => {
+          this.roleSubject.next(roles);
+          this.spinnerService.changeState(false);
+        },
+        error: (error) => {
+          this.roleSubject.error(this.mapError(error));
+          this.spinnerService.changeState(false);
+        }
       });
   }
 

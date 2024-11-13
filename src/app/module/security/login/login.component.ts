@@ -1,8 +1,9 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoginRequest } from 'src/app/core/models/authentication.model';
 import { AuthenticationService } from 'src/app/core/services/security/authentication/authentication.service';
 import { SessionService } from 'src/app/core/services/utils/session/session.service';
+import { SpinnerService } from 'src/app/core/services/utils/spinner/spinner.service';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,8 @@ export class LoginComponent implements OnInit {
   @ViewChild("credentialsError") credentialsError: ElementRef;
   @ViewChild("serverError") serverError: ElementRef;
 
+  @Output() spinnerEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   loginForm: FormGroup;
 
   request: LoginRequest = new LoginRequest();
@@ -23,6 +26,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private authenticationService: AuthenticationService,
     private sessionService: SessionService,
+    private spinnerService: SpinnerService,
     private formBuilder: FormBuilder
   ) { }
 
@@ -63,14 +67,17 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+    this.spinnerService.changeState(true);
     this.authenticationService.login(this.request).subscribe({
       next: (response) => {
         this.sessionService.saveSession(this.request, response.data.token);
+        this.spinnerService.changeState(false);
       },
       error: (error) => {
         if(error.error.error.code == 403) this.credentialsError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
         console.log("error: ", error.statusText);
+        this.spinnerService.changeState(false);
       }
     })
   }

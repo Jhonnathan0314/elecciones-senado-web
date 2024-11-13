@@ -1,3 +1,4 @@
 <div class="app">
+    <app-spinner *ngIf="loading" [ngClass]="loading ? 'spinner' : ''"></app-spinner>
     <router-outlet></router-outlet>
 </div>

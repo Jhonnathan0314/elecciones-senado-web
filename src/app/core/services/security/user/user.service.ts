@@ -5,6 +5,7 @@ import { RegisterRequest } from 'src/app/core/models/authentication.model';
 import { ApiResponse, ErrorMessage } from 'src/app/core/models/response.model';
 import { User } from 'src/app/core/models/security.model';
 import { environment } from 'src/environments/environment';
+import { SpinnerService } from '../../utils/spinner/spinner.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,7 @@ export class UserService {
   private userSubject = new BehaviorSubject<User[]>([]);
   users$: Observable<User[]> = this.userSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private spinnerService: SpinnerService) {
     this.findAll();
   }
 
@@ -36,13 +37,20 @@ export class UserService {
   }
 
   private findAll() {
+    this.spinnerService.changeState(true);
     this.http.get<ApiResponse<User[]>>(`${this.apigatewayUrl}/user`)
       .pipe(
         map(response => response.data)
       )
       .subscribe({
-        next: (users) => this.userSubject.next(users),
-        error: (error) => this.userSubject.error(this.mapError(error))
+        next: (users) => {
+          this.userSubject.next(users);
+          this.spinnerService.changeState(false);
+        },
+        error: (error) => {
+          this.userSubject.error(this.mapError(error));
+          this.spinnerService.changeState(false);
+        }
       });
   }
 

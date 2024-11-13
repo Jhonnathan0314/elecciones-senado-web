@@ -5,6 +5,7 @@ import { City, Department, ElectionTable } from 'src/app/core/models/results.mod
 import { CityService } from 'src/app/core/services/results/city/city.service';
 import { DepartmentService } from 'src/app/core/services/results/department/department.service';
 import { ElectionTableService } from 'src/app/core/services/results/election-table/election-table.service';
+import { SpinnerService } from 'src/app/core/services/utils/spinner/spinner.service';
 
 @Component({
   selector: 'app-election-table-all',
@@ -29,7 +30,8 @@ export class ElectionTableAllComponent implements OnInit, OnChanges, OnDestroy {
     private router: Router,
     private electionTableService: ElectionTableService,
     private departmentService: DepartmentService,
-    private cityService: CityService
+    private cityService: CityService,
+    private spinnerService: SpinnerService
   ) { }
 
   ngOnInit(): void {
@@ -96,8 +98,15 @@ export class ElectionTableAllComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   delete(id: number) {
+    this.spinnerService.changeState(true);
     this.electionTableService.deleteById(id).subscribe({
-      error: (error) => this.hasServerError = true
+      next: () => {
+        this.spinnerService.changeState(false);
+      },
+      error: (error) => {
+        this.hasServerError = true;
+        this.spinnerService.changeState(false);
+      }
     })
   }
 

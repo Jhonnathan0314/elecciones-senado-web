@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Party } from 'src/app/core/models/results.model';
 import { PartyService } from 'src/app/core/services/results/party/party.service';
+import { SpinnerService } from 'src/app/core/services/utils/spinner/spinner.service';
 
 @Component({
   selector: 'app-party-create',
@@ -22,7 +23,8 @@ export class PartyCreateComponent implements OnInit {
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
-    private partyService: PartyService
+    private partyService: PartyService,
+    private spinnerService: SpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -75,13 +77,16 @@ export class PartyCreateComponent implements OnInit {
   }
 
   create() {
+    this.spinnerService.changeState(true);
     this.partyService.create(this.party).subscribe({
       next: (response) => {
         this.router.navigateByUrl('/dashboard/party');
+        this.spinnerService.changeState(false);
       },
       error: (error) => {
         if(error.error.error.code == 409) this.duplicatedError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
+        this.spinnerService.changeState(false);
         console.log("error: ", error.statusText);
       }
     })

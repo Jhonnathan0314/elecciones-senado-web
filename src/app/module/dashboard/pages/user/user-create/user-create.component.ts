@@ -6,6 +6,7 @@ import { RegisterRequest } from 'src/app/core/models/authentication.model';
 import { DocumentType, Role, User } from 'src/app/core/models/security.model';
 import { DocumentTypeService } from 'src/app/core/services/security/document-type/document-type.service';
 import { UserService } from 'src/app/core/services/security/user/user.service';
+import { SpinnerService } from 'src/app/core/services/utils/spinner/spinner.service';
 
 @Component({
   selector: 'app-user-create',
@@ -38,7 +39,8 @@ export class UserCreateComponent implements OnInit, OnDestroy {
     private router: Router,
     private formBuilder: FormBuilder,
     private userService: UserService,
-    private documentTypeService: DocumentTypeService
+    private documentTypeService: DocumentTypeService,
+    private spinnerService: SpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -125,11 +127,16 @@ export class UserCreateComponent implements OnInit, OnDestroy {
   }
 
   create() {
+    this.spinnerService.changeState(true);
     this.userService.create(this.user).subscribe({
-      next: () => this.router.navigateByUrl('/dashboard/user'),
+      next: () => {
+        this.router.navigateByUrl('/dashboard/user');
+        this.spinnerService.changeState(false);
+      },
       error: (error) => {
         if(error.code == 409) this.duplicatedError.nativeElement.removeAttribute('hidden');
         if(error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
+        this.spinnerService.changeState(false);
       }
     });
   }

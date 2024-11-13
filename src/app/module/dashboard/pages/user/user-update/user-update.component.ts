@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, firstValueFrom } from 'rxjs';
 import { User } from 'src/app/core/models/security.model';
 import { UserService } from 'src/app/core/services/security/user/user.service';
+import { SpinnerService } from 'src/app/core/services/utils/spinner/spinner.service';
 
 @Component({
   selector: 'app-user-update',
@@ -34,7 +35,8 @@ export class UserUpdateComponent implements OnInit, OnDestroy {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private userService: UserService
+    private userService: UserService,
+    private spinnerService: SpinnerService
   ) {}
 
   ngOnInit(): void {
@@ -118,12 +120,17 @@ export class UserUpdateComponent implements OnInit, OnDestroy {
   }
 
   update() {
+    this.spinnerService.changeState(true);
     this.userService.update(this.user).subscribe({
-      next: () => this.router.navigateByUrl('/dashboard/user'),
+      next: () => {
+        this.router.navigateByUrl('/dashboard/user');
+        this.spinnerService.changeState(false);
+      },
       error: (error) => {
         if(error.code == 409) this.duplicatedError.nativeElement.removeAttribute('hidden');
         if(error.code == 406) this.noChangesError.nativeElement.removeAttribute('hidden');
         if(error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
+        this.spinnerService.changeState(false);
       }
     });
   }

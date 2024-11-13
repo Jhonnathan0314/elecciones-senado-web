@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Party } from 'src/app/core/models/results.model';
 import { PartyService } from 'src/app/core/services/results/party/party.service';
+import { SpinnerService } from 'src/app/core/services/utils/spinner/spinner.service';
 
 @Component({
   selector: 'app-party-all',
@@ -19,7 +20,8 @@ export class PartyAllComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private partyService: PartyService
+    private partyService: PartyService,
+    private spinnerService: SpinnerService
   ) { }
 
   ngOnInit(): void {
@@ -42,8 +44,15 @@ export class PartyAllComponent implements OnInit, OnDestroy {
   }
 
   delete(id: number) {
+    this.spinnerService.changeState(true);
     this.partyService.deleteById(id).subscribe({
-      error: (error) => this.hasServerError = true
+      next: () => {
+        this.spinnerService.changeState(false);
+      },
+      error: (error) => {
+        this.hasServerError = true;
+        this.spinnerService.changeState(false);
+      }
     })
   }
 

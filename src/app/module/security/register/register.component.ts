@@ -6,6 +6,7 @@ import { DocumentType } from 'src/app/core/models/security.model';
 import { AuthenticationService } from 'src/app/core/services/security/authentication/authentication.service';
 import { DocumentTypeService } from 'src/app/core/services/security/document-type/document-type.service';
 import { SessionService } from 'src/app/core/services/utils/session/session.service';
+import { SpinnerService } from 'src/app/core/services/utils/spinner/spinner.service';
 
 @Component({
   selector: 'app-register',
@@ -39,6 +40,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     private authenticationService: AuthenticationService, 
     private sessionService: SessionService,
     private documentTypeService: DocumentTypeService,
+    private spinnerService: SpinnerService,
     private formBuilder: FormBuilder
   ) { }
 
@@ -126,13 +128,16 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   register() {
+    this.spinnerService.changeState(true);
     this.authenticationService.register(this.request).subscribe({
       next: (response) => {
         this.sessionService.saveSession(this.request, response.data.token);
+        this.spinnerService.changeState(false);
       },
       error: (error) => {
         if(error.error.error.code == 409) this.duplicatedError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
+        this.spinnerService.changeState(false);
         console.log("error: ", error.statusText);
       }
     })

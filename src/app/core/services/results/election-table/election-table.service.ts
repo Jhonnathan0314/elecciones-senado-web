@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, catchError, map, tap, throwError } from 'r
 import { ApiResponse, ErrorMessage } from 'src/app/core/models/response.model';
 import { ElectionTable } from 'src/app/core/models/results.model';
 import { environment } from 'src/environments/environment';
+import { SpinnerService } from '../../utils/spinner/spinner.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class ElectionTableService {
   private electionTableSubject = new BehaviorSubject<ElectionTable[]>([]);
   electionTables$: Observable<ElectionTable[]> = this.electionTableSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private spinnerService: SpinnerService) {
     this.findAll();
   }
 
@@ -34,14 +35,21 @@ export class ElectionTableService {
     }
   }
 
-  findAll() {
+  private findAll() {
+    this.spinnerService.changeState(true);
     this.http.get<ApiResponse<ElectionTable[]>>(`${this.apigatewayUrl}/election-table`)
       .pipe(
         map(response => response.data)
       )
       .subscribe({
-        next: (electionTables) => this.electionTableSubject.next(electionTables),
-        error: (err) => this.electionTableSubject.error(this.mapError(err))
+        next: (electionTables) => {
+          this.electionTableSubject.next(electionTables);
+          this.spinnerService.changeState(false);
+        },
+        error: (err) => {
+          this.electionTableSubject.error(this.mapError(err));
+          this.spinnerService.changeState(false);
+        }
       });
   }
 
