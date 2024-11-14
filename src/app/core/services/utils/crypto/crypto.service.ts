@@ -10,7 +10,7 @@ export class CryptoService {
   key: string;
 
   constructor() {
-    this.key = environment.CRYPTO_KEY;
+    this.key = environment.CRYPTO_KEY ?? '';
   }
 
   encryptText(value: string): string {

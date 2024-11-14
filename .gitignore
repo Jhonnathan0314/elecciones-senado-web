@@ -44,3 +44,5 @@ Thumbs.db
 appsettings.json
 
 package-lock.json
+
+.env

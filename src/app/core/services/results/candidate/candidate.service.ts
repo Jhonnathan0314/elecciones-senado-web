@@ -11,7 +11,7 @@ import { SpinnerService } from '../../utils/spinner/spinner.service';
 })
 export class CandidateService {
 
-  apigatewayUrl = environment.APIGATEWAY_URL + environment.APIGATEWAY_PATH + environment.RESULTS_PATH;
+  apigatewayUrl = `${environment.APIGATEWAY_URL}${environment.APIGATEWAY_PATH}${environment.RESULTS_PATH}`;
 
   private candidateSubject = new BehaviorSubject<Candidate[]>([]);
   candidates$: Observable<Candidate[]> = this.candidateSubject.asObservable();

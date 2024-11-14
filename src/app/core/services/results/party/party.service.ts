@@ -11,7 +11,7 @@ import { SpinnerService } from '../../utils/spinner/spinner.service';
 })
 export class PartyService {
 
-  apigatewayUrl = environment.APIGATEWAY_URL + environment.APIGATEWAY_PATH + environment.RESULTS_PATH;
+  apigatewayUrl = `${environment.APIGATEWAY_URL}${environment.APIGATEWAY_PATH}${environment.RESULTS_PATH}`;
 
   private partySubject = new BehaviorSubject<Party[]>([]);
   parties$: Observable<Party[]> = this.partySubject.asObservable();

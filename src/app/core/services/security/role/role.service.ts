@@ -11,7 +11,7 @@ import { SpinnerService } from '../../utils/spinner/spinner.service';
 })
 export class RoleService {
 
-  apigatewayUrl = environment.APIGATEWAY_URL + environment.APIGATEWAY_PATH + environment.SECURITY_PATH;
+  apigatewayUrl = `${environment.APIGATEWAY_URL}${environment.APIGATEWAY_PATH}${environment.SECURITY_PATH}`;
 
   private roleSubject = new BehaviorSubject<Role[]>([]);
   roles$: Observable<Role[]> = this.roleSubject.asObservable();

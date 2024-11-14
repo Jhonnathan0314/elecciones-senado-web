@@ -11,7 +11,7 @@ import { SpinnerService } from '../../utils/spinner/spinner.service';
 })
 export class DepartmentService {
 
-  apigatewayUrl = environment.APIGATEWAY_URL + environment.APIGATEWAY_PATH + environment.RESULTS_PATH;
+  apigatewayUrl = `${environment.APIGATEWAY_URL}${environment.APIGATEWAY_PATH}${environment.RESULTS_PATH}`;
 
   private departmentSubject = new BehaviorSubject<Department[]>([]);
   departments$: Observable<Department[]> = this.departmentSubject.asObservable();

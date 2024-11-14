@@ -13,7 +13,7 @@ export class AuthenticationService {
   apigatewayUrl = '';
 
   constructor(private http: HttpClient) {
-    this.apigatewayUrl = environment.APIGATEWAY_URL + environment.APIGATEWAY_PATH + environment.SECURITY_PATH;
+    this.apigatewayUrl = `${environment.APIGATEWAY_URL}${environment.APIGATEWAY_PATH}${environment.SECURITY_PATH}`;
   }
 
   login(request: LoginRequest): Observable<ApiResponse<AuthResponse>> {

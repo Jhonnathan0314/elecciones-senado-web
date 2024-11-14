@@ -11,7 +11,7 @@ import { SpinnerService } from '../../utils/spinner/spinner.service';
 })
 export class DocumentTypeService {
 
-  apigatewayUrl = environment.APIGATEWAY_URL + environment.APIGATEWAY_PATH + environment.SECURITY_PATH;
+  apigatewayUrl = `${environment.APIGATEWAY_URL}${environment.APIGATEWAY_PATH}${environment.SECURITY_PATH}`;
 
   private docTypeSubject = new BehaviorSubject<DocumentType[]>([]);
   docTypes$: Observable<DocumentType[]> = this.docTypeSubject.asObservable();

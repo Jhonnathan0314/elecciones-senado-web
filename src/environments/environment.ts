@@ -1,9 +1,7 @@
-import { AppSettings } from "appsettings-json-reader";
-
 export const environment = {
-    APIGATEWAY_URL: AppSettings.readAppSettings().apigatewayUrl,
-    APIGATEWAY_PATH: AppSettings.readAppSettings().apigatewayPath,
-    SECURITY_PATH: AppSettings.readAppSettings().securityPath,
-    RESULTS_PATH: AppSettings.readAppSettings().resultsPath,
-    CRYPTO_KEY: AppSettings.readAppSettings().cryptoKey
+    APIGATEWAY_URL: process.env['APIGATEWAY_URL'],
+    APIGATEWAY_PATH: process.env['APIGATEWAY_PATH'],
+    SECURITY_PATH: process.env['SECURITY_PATH'],
+    RESULTS_PATH: process.env['RESULTS_PATH'],
+    CRYPTO_KEY: process.env['CRYPTO_KEY']
 };

@@ -12,7 +12,7 @@ import { SpinnerService } from '../../utils/spinner/spinner.service';
 })
 export class UserService {
 
-  apigatewayUrl = environment.APIGATEWAY_URL + environment.APIGATEWAY_PATH + environment.SECURITY_PATH;
+  apigatewayUrl = `${environment.APIGATEWAY_URL}${environment.APIGATEWAY_PATH}${environment.SECURITY_PATH}`;
 
   private userSubject = new BehaviorSubject<User[]>([]);
   users$: Observable<User[]> = this.userSubject.asObservable();
