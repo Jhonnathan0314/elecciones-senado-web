@@ -57,7 +57,7 @@ export class ElectionTableAllComponent implements OnInit, OnChanges, OnDestroy {
         this.addCitiesDepartments();
       },
       error: (response) => {
-        if(response.error.code === 404) this.electionTables = [];
+        if(response.error.error.code === 404) this.electionTables = [];
         else this.hasServerError = true;
       }
     })
@@ -70,7 +70,7 @@ export class ElectionTableAllComponent implements OnInit, OnChanges, OnDestroy {
         this.addCitiesDepartments();
       },
       error: (response) => {
-        if(response.error.code === 404) this.departments = [];
+        if(response.error.error.code === 404) this.departments = [];
         else this.hasServerError = true;
       }
     })
@@ -83,7 +83,7 @@ export class ElectionTableAllComponent implements OnInit, OnChanges, OnDestroy {
         this.addCitiesDepartments();
       },
       error: (response) => {
-        if(response.error.code === 404) this.cities = [];
+        if(response.error.error.code === 404) this.cities = [];
         else this.hasServerError = true;
       }
     })

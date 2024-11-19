@@ -16,6 +16,7 @@ export class RoleUpdateComponent implements OnInit, OnDestroy {
   @ViewChild("nameInput") nameInput: ElementRef;
   @ViewChild("serverError") serverError: ElementRef;
   @ViewChild("noChangesError") noChangesError: ElementRef;
+  @ViewChild("requestError") requestError: ElementRef;
 
   id: number = 0;
 
@@ -111,8 +112,10 @@ export class RoleUpdateComponent implements OnInit, OnDestroy {
         this.spinnerService.changeState(false);
       },
       error: (error) => {
+        if(error.error.error.code == 400) this.requestError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 406) this.noChangesError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
+        this.hasServerError = true;
         this.spinnerService.changeState(false);
         console.log("error: ", error.statusText);
       }

@@ -20,6 +20,7 @@ export class ElectionTableUpdateComponent implements OnInit, OnDestroy {
   @ViewChild("departmentIdInput") departmentIdInput: ElementRef;
   @ViewChild("cityIdInput") cityIdInput: ElementRef;
   @ViewChild("serverError") serverError: ElementRef;
+  @ViewChild("requestError") requestError: ElementRef;
   @ViewChild("noChangesError") noChangesError: ElementRef;
 
   id: number = 0;
@@ -68,7 +69,10 @@ export class ElectionTableUpdateComponent implements OnInit, OnDestroy {
         this.departments = departments;
         this.fillForm();
       },
-      error: (error) => this.hasServerError = true
+      error: (response) => {
+        if(response.error.error.code === 404) this.departments = [];
+        this.hasServerError = true;
+      }
     })
   }
 
@@ -172,8 +176,10 @@ export class ElectionTableUpdateComponent implements OnInit, OnDestroy {
         this.spinnerService.changeState(false);
       },
       error: (error) => {
+        if(error.error.error.code == 400) this.requestError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 406) this.noChangesError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
+        this.hasServerError = true;
         this.spinnerService.changeState(false);
         console.log("error: ", error.statusText);
       }

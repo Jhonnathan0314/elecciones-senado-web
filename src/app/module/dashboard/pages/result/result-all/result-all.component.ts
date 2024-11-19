@@ -36,7 +36,7 @@ export class ResultAllComponent implements OnInit, OnDestroy {
     this.resultSubscription = this.resultService.results$.subscribe({
       next: (results) => this.results = results,
       error: (response) => {
-        if(response.error.code === 404) this.results = [];
+        if(response.error.error.code === 404) this.results = [];
         else this.hasServerError = true;
       }
     })

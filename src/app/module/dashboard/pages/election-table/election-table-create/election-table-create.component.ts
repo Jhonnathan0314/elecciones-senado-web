@@ -20,6 +20,7 @@ export class ElectionTableCreateComponent implements OnInit {
   @ViewChild("departmentIdInput") departmentIdInput: ElementRef;
   @ViewChild("cityIdInput") cityIdInput: ElementRef;
   @ViewChild("serverError") serverError: ElementRef;
+  @ViewChild("requestError") requestError: ElementRef;
   @ViewChild("duplicatedError") duplicatedError: ElementRef;
 
   createForm: FormGroup;
@@ -51,7 +52,10 @@ export class ElectionTableCreateComponent implements OnInit {
   openDepartmentSubscription() {
     this.departmentSubscription = this.departmentService.departments$.subscribe({
       next: (departments) => this.departments = departments,
-      error: (error) => this.hasServerError = true
+      error: (response) => {
+        if(response.error.error.code === 404) this.departments = [];
+        this.hasServerError = true;
+      }
     })
   }
 
@@ -130,8 +134,10 @@ export class ElectionTableCreateComponent implements OnInit {
         this.spinnerService.changeState(false);
       },
       error: (error) => {
+        if(error.error.error.code == 400) this.requestError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 409) this.duplicatedError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
+        this.hasServerError = true;
         this.spinnerService.changeState(false);
         console.log("error: ", error.statusText);
       }

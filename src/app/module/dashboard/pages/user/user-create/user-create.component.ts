@@ -25,6 +25,7 @@ export class UserCreateComponent implements OnInit, OnDestroy {
   @ViewChild("serverError") serverError: ElementRef;
   @ViewChild("passwordError") passwordError: ElementRef;
   @ViewChild("duplicatedError") duplicatedError: ElementRef;
+  @ViewChild("requestError") requestError: ElementRef;
 
   createForm: FormGroup;
   user: RegisterRequest = new RegisterRequest();
@@ -134,8 +135,10 @@ export class UserCreateComponent implements OnInit, OnDestroy {
         this.spinnerService.changeState(false);
       },
       error: (error) => {
-        if(error.code == 409) this.duplicatedError.nativeElement.removeAttribute('hidden');
-        if(error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
+        if(error.error.error.code == 400) this.requestError.nativeElement.removeAttribute('hidden');
+        if(error.error.error.code == 409) this.duplicatedError.nativeElement.removeAttribute('hidden');
+        if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
+        this.hasServerError = true;
         this.spinnerService.changeState(false);
       }
     });

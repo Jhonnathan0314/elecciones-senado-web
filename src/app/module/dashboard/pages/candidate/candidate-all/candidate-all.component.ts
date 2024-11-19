@@ -36,7 +36,7 @@ export class CandidateAllComponent implements OnInit, OnDestroy {
     this.candidateSubscription = this.candidateService.candidates$.subscribe({
       next: (candidates) => this.candidates = candidates,
       error: (response) => {
-        if(response.error.code === 404) this.candidates = [];
+        if(response.error.error.code === 404) this.candidates = [];
         else this.hasServerError = true;
       }
     })

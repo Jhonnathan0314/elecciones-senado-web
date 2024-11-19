@@ -51,7 +51,7 @@ export class ViewReportComponent implements OnInit, OnDestroy {
     this.candidateReportSubscription = this.reportService.candidatesReport$.subscribe({
       next: (report) => this.candidateReport = report,
       error: (response) => {
-        if(response.error.code === 404) this.candidateReport = [];
+        if(response.error.error.code === 404) this.candidateReport = [];
         else this.hasServerError = true;
       }
     })
@@ -64,7 +64,7 @@ export class ViewReportComponent implements OnInit, OnDestroy {
         this.fillCitiesDepartments();
       },
       error: (response) => {
-        if(response.error.code === 404) this.candidateReport = [];
+        if(response.error.error.code === 404) this.candidateReport = [];
         else this.hasServerError = true;
       }
     })
@@ -77,7 +77,7 @@ export class ViewReportComponent implements OnInit, OnDestroy {
         this.fillCitiesDepartments();
       },
       error: (response) => {
-        if(response.error.code === 404) this.candidateReport = [];
+        if(response.error.error.code === 404) this.candidateReport = [];
         else this.hasServerError = true;
       }
     })
@@ -90,7 +90,7 @@ export class ViewReportComponent implements OnInit, OnDestroy {
         this.fillCitiesDepartments();
       },
       error: (response) => {
-        if(response.error.code === 404) this.candidateReport = [];
+        if(response.error.error.code === 404) this.candidateReport = [];
         else this.hasServerError = true;
       }
     })

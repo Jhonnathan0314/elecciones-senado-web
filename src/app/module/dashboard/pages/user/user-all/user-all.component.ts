@@ -36,7 +36,7 @@ export class UserAllComponent implements OnInit, OnDestroy {
     this.userSubscription = this.userService.users$.subscribe({
       next: (users) => this.users = users,
       error: (response) => {
-        if(response.error.code === 404) this.users = [];
+        if(response.error.error.code === 404) this.users = [];
         else this.hasServerError = true;
       }
     });

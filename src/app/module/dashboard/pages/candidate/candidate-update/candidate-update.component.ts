@@ -20,6 +20,7 @@ export class CandidateUpdateComponent implements OnInit, OnDestroy {
   @ViewChild("lastNameInput") lastNameInput: ElementRef;
   @ViewChild("partyInput") partyInput: ElementRef;
   @ViewChild("serverError") serverError: ElementRef;
+  @ViewChild("requestError") requestError: ElementRef;
   @ViewChild("noChangesError") noChangesError: ElementRef;
 
   id: number = 0;
@@ -56,7 +57,10 @@ export class CandidateUpdateComponent implements OnInit, OnDestroy {
   openPartySubscription() {
     this.partySubscription = this.partyService.parties$.subscribe({
       next: (parties) => this.parties = parties,
-      error: (error) => this.hasServerError = true
+      error: (response) => {
+        if(response.error.error.code === 404) this.parties = [];
+        else this.hasServerError = true;
+      }
     })
   }
 
@@ -144,6 +148,7 @@ export class CandidateUpdateComponent implements OnInit, OnDestroy {
         this.spinnerService.changeState(false);
       },
       error: (error) => {
+        if(error.error.error.code == 400) this.requestError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 406) this.noChangesError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
         this.spinnerService.changeState(false);

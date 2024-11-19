@@ -24,11 +24,14 @@
             </option>
         </select>
     </div>
-    <div class="flex-full">
+    <div class="flex-full" *ngIf="!hasServerError">
         <button (click)="validateForm()">Crear</button>
     </div>
     <div class="flex-full">
         <span #serverError class="error-text" hidden>Error en el sistema, intente de nuevo más tarde.</span>
+    </div>
+    <div class="flex-full">
+        <span #requestError class="error-text" hidden>Ha ocurrido un error al enviar la información, intente de nuevo más tarde.</span>
     </div>
     <div class="flex-full">
         <span #duplicatedError class="error-text" hidden>Mesa ya existente.</span>

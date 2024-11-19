@@ -15,9 +15,12 @@ export class RoleCreateComponent implements OnInit {
   @ViewChild("nameInput") nameInput: ElementRef;
   @ViewChild("serverError") serverError: ElementRef;
   @ViewChild("duplicatedError") duplicatedError: ElementRef;
+  @ViewChild("requestError") requestError: ElementRef;
 
   createForm: FormGroup;
   role: Role = new Role();
+
+  hasServerError: boolean = false;
 
   constructor(
     private router: Router,
@@ -77,8 +80,10 @@ export class RoleCreateComponent implements OnInit {
         this.spinnerService.changeState(false);
       },
       error: (error) => {
+        if(error.error.error.code == 400) this.requestError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 409) this.duplicatedError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
+        this.hasServerError = true;
         this.spinnerService.changeState(false);
         console.log("error: ", error.statusText);
       }

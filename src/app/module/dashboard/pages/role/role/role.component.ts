@@ -36,7 +36,7 @@ export class RoleComponent implements OnInit, OnDestroy {
     this.roleSubscription = this.roleService.roles$.subscribe({
       next: (roles) => this.roles = roles,
       error: (response) => {
-        if(response.error.code === 404) this.roles = [];
+        if(response.error.error.code === 404) this.roles = [];
         else this.hasServerError = true;
       }
     })

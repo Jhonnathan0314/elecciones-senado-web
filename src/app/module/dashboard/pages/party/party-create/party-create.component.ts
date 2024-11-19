@@ -15,10 +15,13 @@ export class PartyCreateComponent implements OnInit {
   @ViewChild("nameInput") nameInput: ElementRef;
   @ViewChild("mottoInput") mottoInput: ElementRef;
   @ViewChild("serverError") serverError: ElementRef;
+  @ViewChild("requestError") requestError: ElementRef;
   @ViewChild("duplicatedError") duplicatedError: ElementRef;
 
   createForm: FormGroup;
   party: Party = new Party();
+
+  hasServerError: boolean = false;
 
   constructor(
     private router: Router,
@@ -84,8 +87,10 @@ export class PartyCreateComponent implements OnInit {
         this.spinnerService.changeState(false);
       },
       error: (error) => {
+        if(error.error.error.code == 400) this.requestError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 409) this.duplicatedError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
+        this.hasServerError = true;
         this.spinnerService.changeState(false);
         console.log("error: ", error.statusText);
       }

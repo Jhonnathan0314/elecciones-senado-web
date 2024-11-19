@@ -19,6 +19,8 @@ export class ResultCreateComponent implements OnInit, OnDestroy {
   @ViewChild("electionTableInput") electionTableInput: ElementRef;
   @ViewChild("candidateInput") candidateInput: ElementRef;
   @ViewChild("serverError") serverError: ElementRef;
+  @ViewChild("requestError") requestError: ElementRef;
+  @ViewChild("noResultsError") noResultsError: ElementRef;
 
   createForm: FormGroup;
   result: Result = new Result();
@@ -54,14 +56,20 @@ export class ResultCreateComponent implements OnInit, OnDestroy {
   openElectionTableSubscription() {
     this.electionTableSubscription = this.electionTableService.electionTables$.subscribe({
       next: (electionTables) => this.electionTables = electionTables,
-      error: (error) => this.hasServerError = true
+      error: (response) => {
+        if(response.error.error.code === 404) this.electionTables = [];
+        this.hasServerError = true;
+      }
     })
   }
 
   openCandidateSubscription() {
     this.candidateSubscription = this.candidateService.candidates$.subscribe({
       next: (candidates) => this.candidates = candidates,
-      error: (error) => this.hasServerError = true
+      error: (response) => {
+        if(response.error.error.code === 404) this.candidates = [];
+        this.hasServerError = true;
+      }
     })
   }
 
@@ -119,7 +127,10 @@ export class ResultCreateComponent implements OnInit, OnDestroy {
         this.spinnerService.changeState(false);
       },
       error: (error) => {
+        if(error.error.error.code == 400) this.requestError.nativeElement.removeAttribute('hidden');
+        if(error.error.error.code == 404) this.noResultsError.nativeElement.removeAttribute('hidden');
         if(error.error.error.code == 500) this.serverError.nativeElement.removeAttribute('hidden');
+        this.hasServerError = true;
         this.spinnerService.changeState(false);
         console.log("error: ", error.statusText);
       }
