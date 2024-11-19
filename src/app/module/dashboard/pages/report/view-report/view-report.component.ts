@@ -50,7 +50,10 @@ export class ViewReportComponent implements OnInit, OnDestroy {
   openCandidateReportSubscription() {
     this.candidateReportSubscription = this.reportService.candidatesReport$.subscribe({
       next: (report) => this.candidateReport = report,
-      error: (error) => this.hasServerError = true
+      error: (response) => {
+        if(response.error.code === 404) this.candidateReport = [];
+        else this.hasServerError = true;
+      }
     })
   }
 
@@ -60,7 +63,10 @@ export class ViewReportComponent implements OnInit, OnDestroy {
         this.electionTableReport = report;
         this.fillCitiesDepartments();
       },
-      error: (error) => this.hasServerError = true
+      error: (response) => {
+        if(response.error.code === 404) this.candidateReport = [];
+        else this.hasServerError = true;
+      }
     })
   }
 
@@ -70,7 +76,10 @@ export class ViewReportComponent implements OnInit, OnDestroy {
         this.cities = cities
         this.fillCitiesDepartments();
       },
-      error: (error) => this.hasServerError = true
+      error: (response) => {
+        if(response.error.code === 404) this.candidateReport = [];
+        else this.hasServerError = true;
+      }
     })
   }
 
@@ -80,7 +89,10 @@ export class ViewReportComponent implements OnInit, OnDestroy {
         this.departments = departments;
         this.fillCitiesDepartments();
       },
-      error: (error) => this.hasServerError = true
+      error: (response) => {
+        if(response.error.code === 404) this.candidateReport = [];
+        else this.hasServerError = true;
+      }
     })
   }
 

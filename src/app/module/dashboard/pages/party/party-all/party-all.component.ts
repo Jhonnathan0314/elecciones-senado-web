@@ -35,7 +35,10 @@ export class PartyAllComponent implements OnInit, OnDestroy {
   openPartySubscription() {
     this.partySubscription = this.partyService.parties$.subscribe({
       next: (parties) => this.parties = parties,
-      error: (error) => this.hasServerError = true
+      error: (response) => {
+        if(response.error.code === 404) this.parties = [];
+        else this.hasServerError = true;
+      }
     })
   }
 
